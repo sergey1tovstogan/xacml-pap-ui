@@ -1,0 +1,37 @@
+---
+title: "Policy Sets & Rules"
+description: "Understanding the XACML policy hierarchy"
+section: "policies"
+order: 2
+tags: ["policyset", "policy", "rule", "hierarchy", "combining-algorithms"]
+---
+
+## Policy Hierarchy
+
+XACML uses a three-level hierarchy to organize authorization logic:
+
+**PolicySet** — Top-level container. Groups related policies with a combining algorithm.
+
+> **Policy** — Contains rules targeting specific subjects/resources/actions.
+>
+> > **Rule (Permit)** — Grants access when conditions are met.
+> >
+> > **Rule (Deny)** — Blocks access when conditions are met.
+
+## Combining Algorithms
+
+When multiple rules or policies match a request, the combining algorithm determines the final decision:
+
+| Algorithm | Behavior |
+|-----------|----------|
+| `first-applicable` | First matching rule wins. Order matters. |
+| `deny-overrides` | Any Deny overrides all Permits. Most restrictive. |
+| `permit-overrides` | Any Permit overrides all Denies. Most permissive. |
+| `only-one-applicable` | Exactly one policy must match; error if multiple. |
+
+### When to Use Each
+
+- **first-applicable** — Good default for simple policies where rule order is intentional
+- **deny-overrides** — Use when security is paramount (e.g., compliance policies)
+- **permit-overrides** — Use for allowlist patterns (e.g., admin overrides)
+- **only-one-applicable** — Use when policies should be mutually exclusive

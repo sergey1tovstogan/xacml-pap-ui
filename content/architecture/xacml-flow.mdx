@@ -1,0 +1,38 @@
+---
+title: "XACML Component Flow"
+description: "How PAP, PDP, PEP, and PIP work together"
+section: "architecture"
+order: 1
+tags: ["architecture", "pap", "pdp", "pep", "pip", "flow"]
+---
+
+## Authorization Flow
+
+The XACML architecture defines a clear separation of concerns between components that author, store, evaluate, and enforce access control decisions.
+
+### Request Lifecycle
+
+1. **PEP** (Policy Enforcement Point) intercepts an access request
+2. **PEP** sends a decision request to the **PDP**
+3. **PDP** retrieves applicable policies from the **PRP** (Policy Retrieval Point)
+4. **PDP** may query the **PIP** for additional attribute values
+5. **PDP** evaluates policies and returns a decision (Permit/Deny/NotApplicable/Indeterminate)
+6. **PEP** enforces the decision and fulfills any obligations
+
+### Component Roles
+
+<InfoCard title="PAP — Policy Administration Point" variant="teal">
+Where policies are created and managed. In the Temenos ecosystem, this is the PAP UI — a visual editor for authoring XACML policies without writing XML.
+</InfoCard>
+
+<InfoCard title="PDP — Policy Decision Point" variant="purple">
+The engine that evaluates access requests against policies. It receives a request context (subject, resource, action, environment) and returns a decision.
+</InfoCard>
+
+<InfoCard title="PEP — Policy Enforcement Point" variant="info">
+The runtime component that intercepts requests, asks the PDP for a decision, and enforces it. In Temenos, the API Gateway acts as the PEP.
+</InfoCard>
+
+<InfoCard title="PIP — Policy Information Point" variant="success">
+Provides additional attribute values the PDP needs during evaluation — such as the current time, user group memberships, or resource classifications.
+</InfoCard>

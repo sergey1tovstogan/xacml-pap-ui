@@ -1,0 +1,33 @@
+---
+title: "Production Deployment"
+description: "Go-live checklist and best practices"
+section: "integration"
+order: 4
+tags: ["production", "deployment", "security", "monitoring"]
+---
+
+## Go-Live Checklist
+
+### Security Hardening
+
+- Enable TLS for all endpoints
+- Configure Keycloak token expiry
+- Restrict GC MS access to API Gateway only
+
+### Scaling
+
+- Deploy GC MS with multiple replicas
+- Configure policy caching at the gateway
+- Monitor PDP evaluation latency
+
+### Monitoring
+
+- Set up authorization decision logging
+- Alert on policy evaluation failures
+- Track permit/deny ratios per role
+
+## Recommended Architecture
+
+For production deployments, run at least two replicas of GC MS behind a load balancer. Enable policy caching at the API Gateway layer to reduce latency for repeated requests with the same role.
+
+> **Tip:** Start with a `POLICY_CACHE_TTL` of 300 seconds (5 minutes) and adjust based on how frequently your policies change. For environments with infrequent changes, a higher TTL significantly reduces GC MS load.

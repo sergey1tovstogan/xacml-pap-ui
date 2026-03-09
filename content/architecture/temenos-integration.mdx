@@ -1,0 +1,33 @@
+---
+title: "Temenos Integration Architecture"
+description: "How PAP UI fits within Temenos Explorer, GC MS, and Keycloak"
+section: "architecture"
+order: 2
+tags: ["temenos", "integration", "gc-ms", "keycloak", "tex"]
+---
+
+## Temenos Ecosystem
+
+In the Temenos ecosystem, XACML authorization is integrated through several interconnected services. PAP UI generates policies stored in the Generic Config Micro Service (GC MS). At runtime, the API Gateway retrieves these policies via the `CONFIG.PERMISSIONSURL` configuration and applies them to incoming requests.
+
+<InfoCard title="Design Time" variant="teal">
+- PAP UI for visual policy creation
+- Policies exported as JSON/base64 to GC MS
+- Keycloak for role-to-plugin mapping
+</InfoCard>
+
+<InfoCard title="Runtime" variant="purple">
+- API Gateway reads PERMISSIONSURL
+- Automatic role ID substitution
+- PDP evaluates and PEP enforces
+</InfoCard>
+
+## Service Communication
+
+The design-time and runtime flows are separate:
+
+### Design Time
+PAP UI → exports XACML → GC MS stores as JSON/base64
+
+### Runtime
+Client request → API Gateway (PEP) → reads `PERMISSIONSURL` → GC MS returns policies → PDP evaluates → decision enforced

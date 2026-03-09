@@ -1,0 +1,35 @@
+---
+title: "TEX Configuration"
+description: "Configure Temenos Explorer for XACML authorization"
+section: "integration"
+order: 3
+tags: ["tex", "temenos-explorer", "configuration", "permissionsurl"]
+---
+
+## TA_config.js Configuration
+
+Temenos Explorer reads authorization settings from the `TA_config.js` file:
+
+```javascript
+// Temenos Explorer configuration
+// File: TA_config.js
+
+// Policy retrieval URL — {roleId} is substituted at runtime
+CONFIG.PERMISSIONSURL = "http://gc-ms:8080/api/v1/permissions/{roleId}";
+
+// Enable external authorization
+CONFIG.EXTERNAL_AUTH_ENABLED = true;
+
+// Policy format: "json" or "base64"
+CONFIG.POLICY_FORMAT = "base64";
+
+// Cache TTL for policies (seconds)
+CONFIG.POLICY_CACHE_TTL = 300;
+```
+
+## Key Settings
+
+- **PERMISSIONSURL** — The endpoint where policies are retrieved. The `{roleId}` placeholder is substituted with the authenticated user's role at runtime.
+- **EXTERNAL_AUTH_ENABLED** — Must be `true` for XACML authorization to take effect.
+- **POLICY_FORMAT** — Determines how the policy payload is decoded. Use `base64` for production.
+- **POLICY_CACHE_TTL** — How long policies are cached in memory. Lower values mean faster policy updates; higher values reduce GC MS load.

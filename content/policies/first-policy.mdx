@@ -1,0 +1,65 @@
+---
+title: "Your First Policy"
+description: "Create a role-based access policy from scratch"
+section: "policies"
+order: 1
+tags: ["tutorial", "policy", "target", "rule", "xacml"]
+---
+
+## Building a Policy Step by Step
+
+### Step 1: Define the Policy Target
+
+The target specifies which requests this policy applies to. This example targets users with the "TELLER" role:
+
+```xml
+<Target>
+  <!-- Match requests where the subject role is "TELLER" -->
+  <AnyOf>
+    <AllOf>
+      <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+        <AttributeValue DataType="string">TELLER</AttributeValue>
+        <AttributeDesignator
+          Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+          AttributeId="urn:temenos:xacml:attribute:role"
+          DataType="string" />
+      </Match>
+    </AllOf>
+  </AnyOf>
+</Target>
+```
+
+### Step 2: Add a Permit Rule
+
+Rules define the actual access control logic. This rule permits GET (view) operations:
+
+```xml
+<Rule RuleId="PermitAccountView" Effect="Permit">
+  <Description>Allow tellers to view customer accounts</Description>
+  <Target>
+    <AnyOf>
+      <AllOf>
+        <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="string">GET</AttributeValue>
+          <AttributeDesignator
+            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action"
+            AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id"
+            DataType="string" />
+        </Match>
+      </AllOf>
+    </AnyOf>
+  </Target>
+</Rule>
+```
+
+### Step 3: Add a Default Deny Rule
+
+Always include a default deny rule as the last rule in your policy:
+
+```xml
+<Rule RuleId="DefaultDeny" Effect="Deny">
+  <Description>Deny all other requests</Description>
+</Rule>
+```
+
+> **Best practice:** Use `first-applicable` as the combining algorithm so the permit rule is evaluated before the default deny.

@@ -1,0 +1,35 @@
+---
+title: "Quick Start"
+description: "Create your first XACML policy in 5 minutes"
+section: "overview"
+order: 4
+tags: ["quickstart", "tutorial", "getting-started"]
+---
+
+## Create Your First Policy
+
+Follow these steps to create a basic XACML policy using the PAP UI.
+
+<Steps>
+<Step number={1} title="Open PAP UI">
+Navigate to the PAP UI in Temenos Explorer. It's available under the Security or Administration section of your TEX deployment.
+</Step>
+
+<Step number={2} title="Create a New Policy">
+Click "New Policy" and give it a meaningful name, like "TellerAccountAccess". Select a combining algorithm — start with "first-applicable" for simplicity.
+</Step>
+
+<Step number={3} title="Define the Target">
+Set the policy target by specifying which subjects (roles), resources (APIs/functions), and actions this policy governs.
+</Step>
+
+<Step number={4} title="Add Rules">
+Add one or more rules within the policy. Each rule specifies conditions and an effect (Permit or Deny).
+</Step>
+
+<Step number={5} title="Export or Deploy" last>
+Download the generated XACML file or push it directly to the Generic Config Micro Service using the built-in deploy option.
+</Step>
+</Steps>
+
+> **Next step:** Head to the [Policies](/policies/first-policy) section for a detailed walkthrough with actual XACML code examples.

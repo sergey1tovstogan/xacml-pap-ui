@@ -1,0 +1,65 @@
+---
+title: "Conditions & Obligations"
+description: "Advanced XACML features for complex authorization scenarios"
+section: "policies"
+order: 3
+tags: ["conditions", "obligations", "time-based", "audit", "advanced"]
+---
+
+## Conditions
+
+Conditions add fine-grained logic to rules beyond simple target matching. They use XACML functions to evaluate attribute values at runtime.
+
+### Time-Based Access Example
+
+This condition restricts access to business hours (9am-5pm):
+
+```xml
+<Condition>
+  <!-- Only allow access during business hours (9am-5pm) -->
+  <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:time-greater-than-or-equal">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:time-one-and-only">
+        <AttributeDesignator
+          Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+          AttributeId="urn:oasis:names:tc:xacml:1.0:environment:current-time"
+          DataType="time" />
+      </Apply>
+      <AttributeValue DataType="time">09:00:00</AttributeValue>
+    </Apply>
+    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:time-less-than">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:time-one-and-only">
+        <AttributeDesignator
+          Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+          AttributeId="urn:oasis:names:tc:xacml:1.0:environment:current-time"
+          DataType="time" />
+      </Apply>
+      <AttributeValue DataType="time">17:00:00</AttributeValue>
+    </Apply>
+  </Apply>
+</Condition>
+```
+
+## Obligations
+
+Obligations are actions that **must** be performed alongside the authorization decision. They are specified using `ObligationExpressions`.
+
+### Audit Logging Example
+
+This obligation triggers an audit log entry whenever access is permitted:
+
+```xml
+<ObligationExpressions>
+  <ObligationExpression
+    ObligationId="urn:temenos:obligation:audit-log"
+    FulfillOn="Permit">
+    <AttributeAssignmentExpression
+      AttributeId="urn:temenos:obligation:log-level"
+      Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource">
+      <AttributeValue DataType="string">INFO</AttributeValue>
+    </AttributeAssignmentExpression>
+  </ObligationExpression>
+</ObligationExpressions>
+```
+
+> **Important:** The PEP is responsible for fulfilling obligations. If the PEP cannot fulfill an obligation, the decision should be treated as Deny.

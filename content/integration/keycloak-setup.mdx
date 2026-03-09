@@ -1,0 +1,39 @@
+---
+title: "Keycloak Setup"
+description: "Configure identity management and role mappings"
+section: "integration"
+order: 1
+tags: ["keycloak", "identity", "roles", "setup"]
+---
+
+## Prerequisites
+
+- Keycloak instance deployed and accessible
+- Admin access to create realms and clients
+- Temenos Explorer deployment details
+
+## Role Configuration
+
+Configure your Keycloak realm with roles that map to your XACML policies:
+
+```text
+// Keycloak realm: temenos-banking
+// Client: temenos-explorer
+
+Roles:
+  - TELLER        → Basic account operations
+  - SUPERVISOR    → Approval workflows + teller ops
+  - COMPLIANCE    → Read-all + audit access
+  - ADMIN         → Full system access
+
+Role Attributes:
+  - maxTransactionAmount: "10000"
+  - allowedCurrencies: "USD,EUR,GBP"
+  - jurisdiction: "US-EAST"
+```
+
+## Role-to-Policy Mapping
+
+Each Keycloak role maps to one or more XACML policies stored in GC MS. When a user authenticates, their role ID is extracted from the JWT token and used to retrieve the applicable policies via `PERMISSIONSURL`.
+
+> **Important:** Role names in Keycloak must exactly match the role identifiers used in your XACML policies. A mismatch will result in `NotApplicable` decisions.

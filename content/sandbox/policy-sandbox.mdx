@@ -1,0 +1,33 @@
+---
+title: "Policy Sandbox"
+description: "Test XACML policies interactively without deploying them"
+section: "sandbox"
+order: 1
+tags: ["sandbox", "testing", "interactive", "evaluation"]
+---
+
+## Using the Sandbox
+
+The Policy Sandbox lets you test XACML policies against simulated access requests without deploying to a live environment.
+
+### How It Works
+
+1. **Load or write a policy** in the left panel
+2. **Build a request** by specifying Subject, Resource, Action, and Environment attributes
+3. **Evaluate** to see the decision: Permit, Deny, or NotApplicable
+4. **Review** which rules matched and why
+
+### Supported Features
+
+- Target matching with string-equal and string-regexp-match
+- Rule combining algorithms: first-applicable, deny-overrides, permit-overrides
+- Basic condition evaluation (string and time comparisons)
+- Obligation display for matched rules
+
+> **Note:** The sandbox evaluator covers approximately 80% of common XACML patterns. For complex policies with advanced functions, use the AI-powered evaluation via the Assistant.
+
+### Tips
+
+- Start with the pre-loaded sample policies to understand the evaluation flow
+- Use the "Reset" button to clear your changes and start fresh
+- Compare results with different combining algorithms to understand their impact

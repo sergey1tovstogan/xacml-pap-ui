@@ -1,0 +1,45 @@
+---
+title: "Key Concepts"
+description: "Essential XACML building blocks you need to understand"
+section: "overview"
+order: 3
+tags: ["xacml", "concepts", "abac", "subject", "resource", "action"]
+---
+
+## Core XACML Concepts
+
+Understanding these building blocks is essential before creating policies.
+
+<InfoCard title="Subject" variant="teal">
+The entity requesting access — typically a user or service. Identified by attributes like role, department, or clearance level.
+</InfoCard>
+
+<InfoCard title="Resource" variant="teal">
+What is being accessed — an API endpoint, data entity, or business function. Identified by type, ID, or classification.
+</InfoCard>
+
+<InfoCard title="Action" variant="teal">
+The operation being performed — read, write, delete, approve. Maps to HTTP methods or business operations.
+</InfoCard>
+
+<InfoCard title="Environment" variant="teal">
+Contextual conditions — time of day, IP address, location, risk score. Enables context-aware authorization.
+</InfoCard>
+
+## Policy Structure
+
+<InfoCard title="Policy" variant="purple">
+A set of rules that define access control logic. Each policy targets specific subjects, resources, and actions.
+</InfoCard>
+
+<InfoCard title="Rule" variant="purple">
+The smallest unit of authorization logic. Evaluates to Permit, Deny, or NotApplicable based on conditions.
+</InfoCard>
+
+<InfoCard title="Combining Algorithm" variant="purple">
+Determines the overall decision when multiple rules or policies apply. Common algorithms: first-applicable, deny-overrides, permit-overrides.
+</InfoCard>
+
+<InfoCard title="Obligation" variant="purple">
+Actions that MUST be performed alongside the authorization decision — like logging, notifications, or additional checks.
+</InfoCard>

@@ -1,0 +1,34 @@
+---
+title: "PAP UI Overview"
+description: "The visual policy authoring interface in Temenos Explorer"
+section: "overview"
+order: 2
+tags: ["pap", "ui", "temenos", "explorer"]
+---
+
+## What is PAP UI?
+
+The Policy Administration Point User Interface (PAP UI) is a design-time tool within Temenos Explorer (TEX) that allows security policy administrators to create and manage XACML policies through an interactive graphical user interface, without writing XML directly.
+
+<InfoCard title="Create" variant="teal">
+Author XACML policies visually by defining subjects, resources, actions, and conditions through the GUI.
+</InfoCard>
+
+<InfoCard title="Manage" variant="purple">
+View, edit, and version control your policies. Organize them into policy sets with combining algorithms.
+</InfoCard>
+
+<InfoCard title="Deploy" variant="success">
+Export policies as XACML files or push them directly to the Generic Config Micro Service for runtime use.
+</InfoCard>
+
+## Integration with Temenos Ecosystem
+
+The PAP UI connects to the broader Temenos architecture:
+
+1. **PAP UI** — Author policies visually
+2. **GC MS** — Store and serve policies via REST API
+3. **API Gateway** — Retrieve policies at runtime
+4. **PDP** — Evaluate access decisions
+
+> PAP UI generates XACML policies that are stored as JSON/base64 in the Generic Config Micro Service. At runtime, the API Gateway retrieves these policies and the PDP evaluates access requests against them.

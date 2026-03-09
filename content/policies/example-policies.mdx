@@ -1,0 +1,39 @@
+---
+title: "Example Policies"
+description: "Ready-to-use policies for common banking scenarios"
+section: "policies"
+order: 4
+tags: ["examples", "banking", "role-based", "scenarios"]
+---
+
+## Common Banking Scenarios
+
+<InfoCard title="Teller — View Accounts" variant="teal">
+**Scenario:** Allow tellers to view but not modify customer accounts.
+
+Effect: Permit GET on `/accounts/*`, Deny all else.
+</InfoCard>
+
+<InfoCard title="Supervisor — Approve Transactions" variant="purple">
+**Scenario:** Supervisors can approve transactions over the teller limit.
+
+Effect: Permit POST on `/transactions/approve` where amount > 10000.
+</InfoCard>
+
+<InfoCard title="Compliance — Audit Access" variant="info">
+**Scenario:** Compliance officers can read all records during business hours.
+
+Effect: Permit GET on all resources, Condition: 9am-5pm weekdays.
+</InfoCard>
+
+<InfoCard title="Admin — Full Access" variant="success">
+**Scenario:** System administrators have unrestricted access.
+
+Effect: Permit all actions on all resources.
+</InfoCard>
+
+## Combining These Policies
+
+In a production environment, these policies would be grouped into a **PolicySet** with `deny-overrides` as the combining algorithm. This ensures that even if a user has multiple roles, any explicit Deny takes precedence.
+
+> **Tip:** Use the AI Assistant's Policy Generator mode to create these policies automatically. Just describe your scenario in plain English!

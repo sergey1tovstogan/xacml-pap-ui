@@ -1,0 +1,53 @@
+---
+title: "What is XACML?"
+description: "eXtensible Access Control Markup Language — the standard for fine-grained authorization"
+section: "overview"
+order: 1
+tags: ["xacml", "introduction", "abac"]
+---
+
+## XACML at a Glance
+
+XACML (eXtensible Access Control Markup Language) is an OASIS standard that defines a declarative fine-grained, attribute-based access control policy language. It describes how to evaluate access requests according to the rules defined in policies.
+
+<InfoCard title="Key Components" variant="teal">
+- **PAP** — Policy Administration Point: where policies are authored
+- **PDP** — Policy Decision Point: evaluates access requests
+- **PEP** — Policy Enforcement Point: enforces decisions
+- **PIP** — Policy Information Point: provides attribute data
+</InfoCard>
+
+<InfoCard title="XACML 3.0 Features" variant="purple">
+- Attribute-based access control (ABAC)
+- Policy combining algorithms
+- Obligations and advice
+- Hierarchical resource matching
+- Multiple subject categories
+</InfoCard>
+
+## Simple XACML Policy Example
+
+```xml
+<Policy PolicyId="AllowTellerViewAccounts"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:
+          rule-combining-algorithm:first-applicable">
+  <Target>
+    <AnyOf>
+      <AllOf>
+        <Match MatchId="urn:oasis:names:tc:xacml:1.0:
+          function:string-equal">
+          <AttributeValue>Teller</AttributeValue>
+          <AttributeDesignator
+            Category="urn:oasis:names:tc:xacml:1.0:
+              subject-category:access-subject"
+            AttributeId="role"
+            DataType="string"/>
+        </Match>
+      </AllOf>
+    </AnyOf>
+  </Target>
+  <Rule RuleId="PermitViewAccounts" Effect="Permit">
+    <Description>Allow tellers to view accounts</Description>
+  </Rule>
+</Policy>
+```

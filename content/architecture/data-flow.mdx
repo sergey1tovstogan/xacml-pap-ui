@@ -1,0 +1,44 @@
+---
+title: "Data Flow"
+description: "How policies travel from creation to enforcement"
+section: "architecture"
+order: 3
+tags: ["data-flow", "gc-ms", "base64", "permissionsurl", "storage"]
+---
+
+## Policy Storage Format
+
+Policies are stored in the Generic Config Micro Service as JSON objects with base64-encoded XACML content.
+
+```json
+{
+  "policyId": "TellerAccountAccess",
+  "roleId": "TELLER",
+  "permissions": "eyJQb2xpY3kiOiB7Li4ufX0=",
+  "version": "1.0",
+  "active": true
+}
+```
+
+## TEX Configuration
+
+Temenos Explorer retrieves policies at runtime via the `CONFIG.PERMISSIONSURL` setting. The `{roleId}` placeholder is automatically substituted with the authenticated user's role.
+
+```javascript
+// Temenos Explorer configuration
+// File: TA_config.js
+
+// Policy retrieval URL — {roleId} is substituted at runtime
+CONFIG.PERMISSIONSURL = "http://gc-ms:8080/api/v1/permissions/{roleId}";
+// {roleId} is automatically substituted at runtime
+```
+
+## Flow Summary
+
+1. **Author** — Admin creates policy in PAP UI
+2. **Export** — PAP UI encodes policy as base64 and sends to GC MS
+3. **Store** — GC MS persists the policy JSON with role mapping
+4. **Retrieve** — API Gateway calls `PERMISSIONSURL` with the user's role ID
+5. **Decode** — Base64 XACML is decoded back to XML
+6. **Evaluate** — PDP evaluates the request against the policy
+7. **Enforce** — PEP enforces Permit or Deny

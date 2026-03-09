@@ -1,0 +1,31 @@
+---
+title: "Generic Config Micro Service"
+description: "Deploy and configure policy storage"
+section: "integration"
+order: 2
+tags: ["gc-ms", "api", "microservice", "policy-storage"]
+---
+
+## GC MS API Endpoints
+
+The Generic Config Micro Service provides a REST API for policy CRUD operations:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| **GET** | `/api/v1/permissions/{roleId}` | Retrieve policies for a role |
+| **POST** | `/api/v1/permissions` | Create a new policy entry |
+| **PUT** | `/api/v1/permissions/{id}` | Update an existing policy |
+| **DELETE** | `/api/v1/permissions/{id}` | Remove a policy |
+
+## Deployment
+
+GC MS is deployed as a standalone microservice. It requires a database for persistent policy storage and exposes the REST API on a configurable port.
+
+### Key Configuration
+
+- **Database:** PostgreSQL or H2 for development
+- **Port:** Default 8080
+- **Health check:** `GET /actuator/health`
+- **Policy format:** JSON with base64-encoded XACML content
+
+> The API Gateway is the primary consumer of GC MS at runtime. Restrict direct access to GC MS to the PAP UI and API Gateway only.

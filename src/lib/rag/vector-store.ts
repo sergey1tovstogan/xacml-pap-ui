@@ -1,8 +1,12 @@
 import { ChromaClient, type Collection } from "chromadb";
 import type { ProcessedChunk } from "./content-processor";
 
+const chromaUrl = new URL(process.env.CHROMA_URL || "http://localhost:8000");
+
 const chroma = new ChromaClient({
-  path: process.env.CHROMA_URL || "http://localhost:8000",
+  host: chromaUrl.hostname,
+  port: parseInt(chromaUrl.port || "8000", 10),
+  ssl: chromaUrl.protocol === "https:",
 });
 
 const COLLECTION_NAME = process.env.CHROMA_COLLECTION || "pap-ui-docs";

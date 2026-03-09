@@ -1,35 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ragQuery, ragQueryStream } from "@/lib/rag/pipeline";
-import type { ChatMode } from "@/types";
-
-const VALID_MODES: ChatMode[] = ["qa", "policy", "setup", "scripts"];
+import { chatSchema, parseBody } from "@/lib/api-schemas";
+import { logApiRequest } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, mode, stream } = body as {
-      message: string;
-      mode: ChatMode;
-      stream?: boolean;
-    };
+    const parsed = parseBody(chatSchema, body);
 
-    if (!message?.trim()) {
-      return NextResponse.json(
-        { error: "Message is required" },
-        { status: 400 }
-      );
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    if (!VALID_MODES.includes(mode)) {
-      return NextResponse.json(
-        { error: "Invalid mode. Must be one of: qa, policy, setup, scripts" },
-        { status: 400 }
-      );
-    }
+    const { message, mode, stream } = parsed.data;
+    const start = Date.now();
 
     // Streaming mode: return SSE stream
     if (stream) {
-      const sseStream = await ragQueryStream(message.trim(), mode);
+      const sseStream = await ragQueryStream(message, mode);
+      logApiRequest("/api/chat", {
+        inputLength: message.length,
+        mode,
+        status: "success",
+      });
       return new Response(sseStream, {
         headers: {
           "Content-Type": "text/event-stream",
@@ -40,12 +33,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Non-streaming mode: return full JSON response
-    const response = await ragQuery(message.trim(), mode);
+    const response = await ragQuery(message, mode);
+    logApiRequest("/api/chat", {
+      inputLength: message.length,
+      mode,
+      durationMs: Date.now() - start,
+      status: "success",
+    });
     return NextResponse.json(response);
   } catch (error) {
     const msg =
       error instanceof Error ? error.message : "Unknown error occurred";
-    console.error("Chat API error:", msg);
+    logApiRequest("/api/chat", { status: "error", error: msg });
     return NextResponse.json(
       {
         error:

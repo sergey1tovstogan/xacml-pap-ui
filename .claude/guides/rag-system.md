@@ -9,6 +9,8 @@ CHROMA_URL=http://localhost:8000          # ChromaDB endpoint
 CHROMA_COLLECTION=pap-ui-docs            # Collection name
 EMBEDDING_MODEL=nomic-embed-text         # Embedding model
 RETRIEVAL_TOP_K=5                        # Number of chunks to retrieve
+API_KEY=                                 # Optional — enables API key auth on all routes
+LOG_LEVEL=info                           # Pino log level (debug, info, warn, error)
 ```
 
 ## Pipeline Files (`src/lib/rag/`)
@@ -32,12 +34,16 @@ Process: read files → extract text → chunk → embed with nomic-embed-text �
 ## Query Flow
 1. User sends message via chat UI (one of 4 modes: qa, policy, setup, scripts)
 2. `useStreamingChat` hook POSTs to `/api/chat`
-3. API route calls RAG pipeline:
+3. Middleware validates auth + rate limit
+4. API route validates input with Zod schema (`src/lib/api-schemas.ts`)
+5. RAG pipeline processes request:
    - Embed query with nomic-embed-text
    - Search ChromaDB for top_k similar chunks
-   - Build prompt with retrieved context + mode-specific system prompt
+   - Build prompt with `<context>` / `<user_query>` delimiters (prompt injection mitigation)
    - Stream response from Ollama LLM
-4. SSE stream renders in chat UI
+6. Generated XML validated with `fast-xml-parser` before returning (`xmlWarning` set if malformed)
+7. Request logged via pino (`src/lib/logger.ts`)
+8. SSE stream renders in chat UI
 
 ## Adding Content
 1. Add `.mdx` files to `content/[section]/` or docs to `docs/`

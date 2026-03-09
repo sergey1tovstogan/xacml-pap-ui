@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { XMLParser } from "fast-xml-parser";
+import { evaluatePolicySchema, parseBody } from "@/lib/api-schemas";
+import { logApiRequest } from "@/lib/logger";
 
-interface EvaluateRequest {
-  policy: string;
-  request: {
-    subject: Record<string, string>;
-    resource: Record<string, string>;
-    action: string;
-    environment?: Record<string, string>;
-  };
-}
+import type { z } from "zod";
+
+type EvaluateInput = z.infer<typeof evaluatePolicySchema>;
 
 type Decision = "Permit" | "Deny" | "NotApplicable" | "Indeterminate";
 
@@ -18,28 +15,99 @@ interface EvaluateResponse {
   matchedRules: string[];
 }
 
+interface ParsedRule {
+  id: string;
+  effect: "Permit" | "Deny";
+  hasTarget: boolean;
+  attributeValues: string[];
+}
+
+const xmlParser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
+  allowBooleanAttributes: true,
+});
+
 /**
- * Simplified XACML policy evaluator.
+ * Safely extract an array from a parsed XML value that may be a single item or array.
+ */
+function asArray<T>(value: T | T[] | undefined): T[] {
+  if (value === undefined || value === null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * Recursively collect all AttributeValue text content from a parsed XML node.
+ */
+function collectAttributeValues(node: unknown): string[] {
+  const values: string[] = [];
+  if (node === null || node === undefined) return values;
+
+  if (typeof node === "object" && node !== null) {
+    const obj = node as Record<string, unknown>;
+    if ("AttributeValue" in obj) {
+      const attrVals = asArray(obj.AttributeValue);
+      for (const v of attrVals) {
+        if (typeof v === "string") values.push(v.trim());
+        else if (typeof v === "object" && v !== null && "#text" in (v as Record<string, unknown>)) {
+          values.push(String((v as Record<string, unknown>)["#text"]).trim());
+        }
+      }
+    }
+    for (const key of Object.keys(obj)) {
+      if (typeof obj[key] === "object") {
+        values.push(...collectAttributeValues(obj[key]));
+      }
+    }
+  }
+  return values;
+}
+
+/**
+ * Simplified XACML policy evaluator using proper XML parsing.
  * Matches subject attributes and action against policy targets and rules.
  */
-function evaluatePolicy(policy: string, request: EvaluateRequest["request"]): EvaluateResponse {
+function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): EvaluateResponse {
   const matchedRules: string[] = [];
 
   try {
-    // Extract all attribute values from the policy for matching
-    const attributeValues = [...policy.matchAll(/<AttributeValue[^>]*>([^<]+)<\/AttributeValue>/g)]
-      .map((m) => m[1].trim());
+    const parsed = xmlParser.parse(policyXml);
+
+    // Find the Policy element (handle namespace prefixes)
+    const policyKey = Object.keys(parsed).find((k) => k.endsWith("Policy") || k === "Policy");
+    if (!policyKey) {
+      return {
+        decision: "Indeterminate",
+        explanation: "No Policy element found in the provided XML.",
+        matchedRules: [],
+      };
+    }
+
+    const policy = parsed[policyKey];
+
+    // Extract all attribute values from the entire policy for target matching
+    const allAttributeValues = collectAttributeValues(policy);
 
     // Check subject attributes
-    const subjectValues = Object.values(request.subject);
-    const subjectMatch = subjectValues.some((val) => attributeValues.includes(val));
+    const subjectValues = Object.values(request.subject) as string[];
+    const subjectMatch = subjectValues.some((val) => allAttributeValues.includes(val));
 
     // Check action
-    const actionMatch = attributeValues.includes(request.action);
+    const actionMatch = allAttributeValues.includes(request.action);
 
-    // Extract rule IDs and effects
-    const rules = [...policy.matchAll(/<Rule\s+RuleId="([^"]+)"\s+Effect="([^"]+)"[^>]*>/g)]
-      .map((m) => ({ id: m[1], effect: m[2] as "Permit" | "Deny" }));
+    // Determine combining algorithm
+    const combiningAlg = String(policy["@_RuleCombiningAlgId"] || "");
+    const isFirstApplicable = combiningAlg.includes("first-applicable");
+    const isDenyOverrides = combiningAlg.includes("deny-overrides");
+
+    // Extract rules
+    const rawRules = asArray(policy.Rule);
+    const rules: ParsedRule[] = rawRules.map((r: Record<string, unknown>) => ({
+      id: String(r["@_RuleId"] || "unknown"),
+      effect: (r["@_Effect"] === "Permit" ? "Permit" : "Deny") as "Permit" | "Deny",
+      hasTarget: "Target" in r,
+      attributeValues: collectAttributeValues(r),
+    }));
 
     if (!subjectMatch) {
       return {
@@ -49,23 +117,10 @@ function evaluatePolicy(policy: string, request: EvaluateRequest["request"]): Ev
       };
     }
 
-    // Check combining algorithm
-    const isFirstApplicable = policy.includes("first-applicable");
-    const isDenyOverrides = policy.includes("deny-overrides");
-
     for (const rule of rules) {
-      // Rules with no target match everything in the policy scope
-      const ruleSection = policy.slice(
-        policy.indexOf(`RuleId="${rule.id}"`),
-        policy.indexOf("</Rule>", policy.indexOf(`RuleId="${rule.id}"`)) + 7
-      );
-
-      const ruleHasTarget = ruleSection.includes("<Target>");
-      const ruleAttributeValues = [...ruleSection.matchAll(/<AttributeValue[^>]*>([^<]+)<\/AttributeValue>/g)]
-        .map((m) => m[1].trim());
-
-      const ruleMatches = !ruleHasTarget || ruleAttributeValues.includes(request.action) ||
-        subjectValues.some((v) => ruleAttributeValues.includes(v));
+      const ruleMatches = !rule.hasTarget ||
+        rule.attributeValues.includes(request.action) ||
+        subjectValues.some((v) => rule.attributeValues.includes(v));
 
       if (ruleMatches) {
         matchedRules.push(rule.id);
@@ -115,21 +170,26 @@ function evaluatePolicy(policy: string, request: EvaluateRequest["request"]): Ev
 
 export async function POST(request: NextRequest) {
   try {
-    const body: EvaluateRequest = await request.json();
+    const body = await request.json();
+    const parsed = parseBody(evaluatePolicySchema, body);
 
-    if (!body.policy?.trim()) {
-      return NextResponse.json({ error: "Policy XML is required" }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    if (!body.request?.action) {
-      return NextResponse.json({ error: "Request with action is required" }, { status: 400 });
-    }
+    const start = Date.now();
+    const result = evaluatePolicy(parsed.data.policy, parsed.data.request);
 
-    const result = evaluatePolicy(body.policy, body.request);
+    logApiRequest("/api/evaluate-policy", {
+      inputLength: parsed.data.policy.length,
+      durationMs: Date.now() - start,
+      status: "success",
+    });
+
     return NextResponse.json(result);
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("Evaluate policy error:", msg);
+    logApiRequest("/api/evaluate-policy", { status: "error", error: msg });
     return NextResponse.json({ error: "Failed to evaluate policy" }, { status: 500 });
   }
 }

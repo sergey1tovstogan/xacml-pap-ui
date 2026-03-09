@@ -6,12 +6,22 @@
 /[section]/[slug]          → MDX documentation pages (sidebar, TOC, prev/next)
 /sandbox                   → Interactive policy testing sandbox
 /assistant                 → AI assistant page
+/api/*                     → All API routes pass through middleware (auth + rate limiting)
 /api/chat                  → RAG-powered Q&A streaming (POST)
 /api/generate-policy       → XACML policy generation (POST)
 /api/evaluate-policy       → Policy evaluation (POST)
 /api/generate-script       → Script generation (POST)
 /api/guided-setup          → Step-by-step setup assistant (POST)
 ```
+
+## API Security Layer
+All `/api/*` requests pass through `src/middleware.ts` before reaching route handlers:
+1. **Authentication** — API key validation (optional, enabled via `API_KEY` env var)
+2. **Rate limiting** — 20 requests/min per IP
+
+Route handlers then apply:
+3. **Input validation** — Zod schemas from `src/lib/api-schemas.ts`
+4. **Structured logging** — Pino logger via `src/lib/logger.ts`
 
 ## Navigation
 Defined in `src/config/site.ts` — 5 sections:
@@ -23,7 +33,7 @@ Defined in `src/config/site.ts` — 5 sections:
 
 ## RAG Pipeline (`src/lib/rag/`)
 1. **Ingestion**: `scripts/ingest.ts` → reads `content/` + `docs/` → chunks text → embeds via Ollama (nomic-embed-text) → stores in ChromaDB
-2. **Query flow**: API route → embed query → ChromaDB similarity search (top_k) → inject context into Ollama prompt → stream response
+2. **Query flow**: API route → embed query → ChromaDB similarity search (top_k) → inject context into Ollama prompt (with `<context>` / `<user_query>` delimiters) → stream response → validate XML output
 3. **Files**: content-processor.ts → embeddings.ts → vector-store.ts → prompts.ts → llm.ts → pipeline.ts (orchestrator)
 
 ## Data Flow

@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ragQuery } from "@/lib/rag/pipeline";
+import { generateScriptSchema, parseBody } from "@/lib/api-schemas";
+import { logApiRequest } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
-    const { description } = (await request.json()) as { description: string };
+    const body = await request.json();
+    const parsed = parseBody(generateScriptSchema, body);
 
-    if (!description?.trim()) {
-      return NextResponse.json(
-        { error: "Script description is required" },
-        { status: 400 }
-      );
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const result = await ragQuery(description.trim(), "scripts");
+    const start = Date.now();
+    const result = await ragQuery(parsed.data.description, "scripts");
+
+    logApiRequest("/api/generate-script", {
+      inputLength: parsed.data.description.length,
+      durationMs: Date.now() - start,
+      status: "success",
+    });
 
     return NextResponse.json({
       content: result.content,
@@ -21,7 +28,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("Generate script error:", msg);
+    logApiRequest("/api/generate-script", { status: "error", error: msg });
     return NextResponse.json(
       { error: "Failed to generate script. Ensure Ollama and ChromaDB are running." },
       { status: 500 }

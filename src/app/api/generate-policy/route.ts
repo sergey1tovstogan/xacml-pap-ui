@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ragQuery } from "@/lib/rag/pipeline";
+import { generatePolicySchema, parseBody } from "@/lib/api-schemas";
+import { logApiRequest } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
-    const { description } = (await request.json()) as { description: string };
+    const body = await request.json();
+    const parsed = parseBody(generatePolicySchema, body);
 
-    if (!description?.trim()) {
-      return NextResponse.json(
-        { error: "Policy description is required" },
-        { status: 400 }
-      );
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const result = await ragQuery(description.trim(), "policy");
+    const start = Date.now();
+    const result = await ragQuery(parsed.data.description, "policy");
+
+    logApiRequest("/api/generate-policy", {
+      inputLength: parsed.data.description.length,
+      durationMs: Date.now() - start,
+      status: "success",
+    });
 
     return NextResponse.json({
       content: result.content,
@@ -21,7 +28,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
-    console.error("Generate policy error:", msg);
+    logApiRequest("/api/generate-policy", { status: "error", error: msg });
     return NextResponse.json(
       { error: "Failed to generate policy. Ensure Ollama and ChromaDB are running." },
       { status: 500 }

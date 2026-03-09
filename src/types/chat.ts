@@ -21,5 +21,6 @@ export interface ChatResponse {
   content: string;
   sources?: SourceCitation[];
   policyXml?: string;
+  xmlWarning?: string;
   script?: string;
 }

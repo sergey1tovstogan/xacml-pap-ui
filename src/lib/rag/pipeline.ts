@@ -1,8 +1,11 @@
 import type { ChatMode, ChatResponse, SourceCitation } from "@/types";
+import { XMLParser } from "fast-xml-parser";
 import { getEmbedding } from "./embeddings";
 import { getOrCreateCollection, queryDocuments, type RetrievedChunk } from "./vector-store";
 import { generateResponse, generateResponseStream } from "./llm";
 import { SYSTEM_PROMPTS } from "./prompts";
+
+const xmlValidator = new XMLParser({ allowBooleanAttributes: true });
 
 const TOP_K = parseInt(process.env.RETRIEVAL_TOP_K || "5");
 
@@ -13,6 +16,19 @@ function extractFencedBlock(text: string, lang: string): string | undefined {
   const regex = new RegExp("```" + lang + "\\s*\\n([\\s\\S]*?)```", "i");
   const match = text.match(regex);
   return match ? match[1].trim() : undefined;
+}
+
+/**
+ * Validate that a string is well-formed XML.
+ * Returns the XML if valid, undefined if malformed.
+ */
+function validateXml(xml: string): string | undefined {
+  try {
+    xmlValidator.parse(xml);
+    return xml;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -50,8 +66,12 @@ function parseResponse(
   const response: ChatResponse = { content: rawResponse, sources };
 
   if (mode === "policy") {
-    const xml = extractFencedBlock(rawResponse, "xacml") || extractFencedBlock(rawResponse, "xml");
-    if (xml) response.policyXml = xml;
+    const rawXml = extractFencedBlock(rawResponse, "xacml") || extractFencedBlock(rawResponse, "xml");
+    if (rawXml) {
+      const validXml = validateXml(rawXml);
+      response.policyXml = validXml ?? rawXml;
+      if (!validXml) response.xmlWarning = "Generated XML may contain syntax errors.";
+    }
   }
 
   if (mode === "scripts") {

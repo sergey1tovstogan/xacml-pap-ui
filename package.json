@@ -16,6 +16,7 @@
     "@types/react-dom": "^19.2.3",
     "chromadb": "^3.3.1",
     "clsx": "^2.1.1",
+    "fast-xml-parser": "^5.4.2",
     "framer-motion": "^12.35.1",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
@@ -23,13 +24,15 @@
     "next": "^16.1.6",
     "next-mdx-remote": "^6.0.0",
     "ollama": "^0.6.3",
+    "pino": "^10.3.1",
     "postcss": "^8.5.8",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "rehype-pretty-code": "^0.14.3",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "tsx": "^4.21.0"

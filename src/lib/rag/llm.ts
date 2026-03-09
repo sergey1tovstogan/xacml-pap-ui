@@ -12,7 +12,15 @@ function buildMessages(systemPrompt: string, userMessage: string, context: strin
     { role: "system" as const, content: systemPrompt },
     {
       role: "user" as const,
-      content: `Context:\n${context}\n\nQuestion: ${userMessage}`,
+      content: [
+        "<context>",
+        context,
+        "</context>",
+        "",
+        "<user_query>",
+        userMessage,
+        "</user_query>",
+      ].join("\n"),
     },
   ];
 }

@@ -18,7 +18,10 @@ Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-
 - `src/config/` — site.ts (nav/sections), ai-modes.ts (chat modes: qa, policy, setup, scripts)
 - `src/hooks/` — useStreamingChat
 - `src/lib/rag/` — RAG pipeline (embeddings, vector-store, llm, prompts, pipeline)
+- `src/lib/api-schemas.ts` — Zod validation schemas for all API routes
+- `src/lib/logger.ts` — Pino structured logging
 - `src/lib/utils/cn.ts` — className merging (clsx + tailwind-merge)
+- `src/middleware.ts` — API gateway (auth + rate limiting)
 - `src/types/` — TypeScript interfaces
 - `content/` — MDX docs (overview, architecture, integration, policies, sandbox)
 - `scripts/` — ingest.ts, service scripts
@@ -33,8 +36,18 @@ Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-
 - Types imported from `@/types`
 - `import type {}` for type-only imports
 
+## Security
+- API key auth via middleware (`src/middleware.ts`) — set `API_KEY` env var to enable
+- Rate limiting: 20 req/min per IP on all `/api/*` routes
+- Zod schema validation on all API request bodies (`src/lib/api-schemas.ts`)
+- Pino structured logging (`src/lib/logger.ts`) on all API routes
+- Security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP
+- XML parsing: `fast-xml-parser` (never regex) for all XACML evaluation
+- LLM prompt delimiters: `<context>` / `<user_query>` tags in `src/lib/rag/llm.ts`
+- Input limits: 2000 chars (text), 50000 chars (XML)
+
 ## Env
-See `.env.example` — Ollama (URL, model, temp), ChromaDB (URL, collection, embedding model, top_k)
+See `.env.example` — Ollama (URL, model, temp), ChromaDB (URL, collection, embedding model, top_k), API_KEY (optional)
 
 ## Extended Guides
 - `.claude/guides/conventions.md` — Full coding patterns & standards

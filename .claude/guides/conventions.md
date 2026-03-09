@@ -20,6 +20,16 @@
 - RAG pipeline: query → embed → vector search → LLM with context → stream response
 - Use `NextResponse` and standard Web API Request/Response
 
+### Security Patterns
+- All API routes must validate input with `parseBody()` from `@/lib/api-schemas`
+- All API routes must log with `logApiRequest()` from `@/lib/logger`
+- Never use regex for XML parsing — use `fast-xml-parser`
+- Never concatenate user input directly into LLM prompts — wrap with `<context>` / `<user_query>` delimiters
+- Never trust `X-Forwarded-For` without proxy validation — prefer `request.ip`
+- Never use `.includes()` for origin/host comparison — use `new URL().host` exact match
+- Add `zod` schemas for new API routes in `src/lib/api-schemas.ts`
+- Keep input limits enforced: 2000 chars for text, 50000 chars for XML
+
 ## CSS & Styling
 - Tailwind 4 with `@theme inline` block in `globals.css` for all design tokens
 - No arbitrary values when a token exists — use the token

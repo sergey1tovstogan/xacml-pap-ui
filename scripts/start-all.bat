@@ -19,8 +19,11 @@ if !errorlevel!==0 (
     echo [INFO]  Starting Ollama via Podman...
     podman start ollama >nul 2>&1
     if !errorlevel! neq 0 (
-        echo [INFO]  Pulling Ollama image ^(first time may take a few minutes^)...
-        podman pull docker.io/ollama/ollama >nul 2>&1
+        podman image exists docker.io/ollama/ollama >nul 2>&1
+        if !errorlevel! neq 0 (
+            echo [INFO]  Pulling Ollama image ^(first time may take a few minutes^)...
+            podman pull docker.io/ollama/ollama
+        )
         echo [INFO]  Creating Ollama container...
         podman run -d --name ollama -p 11434:11434 -v ollama_data:/root/.ollama docker.io/ollama/ollama >nul 2>&1
     )
@@ -53,8 +56,11 @@ if !errorlevel!==0 (
     echo [INFO]  Starting ChromaDB via Podman...
     podman start chromadb >nul 2>&1
     if !errorlevel! neq 0 (
-        echo [INFO]  Pulling ChromaDB image ^(first time may take a few minutes^)...
-        podman pull docker.io/chromadb/chroma >nul 2>&1
+        podman image exists docker.io/chromadb/chroma >nul 2>&1
+        if !errorlevel! neq 0 (
+            echo [INFO]  Pulling ChromaDB image ^(first time may take a few minutes^)...
+            podman pull docker.io/chromadb/chroma
+        )
         echo [INFO]  Creating ChromaDB container...
         podman run -d --name chromadb -p 8000:8000 -v chroma_data:/chroma/chroma docker.io/chromadb/chroma >nul 2>&1
     )

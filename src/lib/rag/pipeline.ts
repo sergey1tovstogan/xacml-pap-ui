@@ -93,26 +93,28 @@ export async function ragQuery(
   query: string,
   mode: ChatMode
 ): Promise<ChatResponse> {
-  // 1. Embed the user query
-  const queryEmbedding = await getEmbedding(query);
+  // 1. Embed the user query and retrieve relevant chunks (graceful fallback if RAG unavailable)
+  let retrieved: RetrievedChunk[] = [];
+  let context = "";
+  try {
+    const queryEmbedding = await getEmbedding(query);
+    const collection = await getOrCreateCollection();
+    retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
+    context = retrieved
+      .map(
+        (r, i) =>
+          `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
+      )
+      .join("\n\n---\n\n");
+  } catch {
+    // RAG unavailable (embedding model missing or ChromaDB down) — continue with LLM-only
+  }
 
-  // 2. Retrieve relevant chunks
-  const collection = await getOrCreateCollection();
-  const retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
-
-  // 3. Build context from retrieved chunks
-  const context = retrieved
-    .map(
-      (r, i) =>
-        `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
-    )
-    .join("\n\n---\n\n");
-
-  // 4. Generate response with mode-specific system prompt
+  // 2. Generate response with mode-specific system prompt
   const systemPrompt = SYSTEM_PROMPTS[mode];
   const rawResponse = await generateResponse(systemPrompt, query, context);
 
-  // 5. Parse and structure the response
+  // 3. Parse and structure the response
   return parseResponse(rawResponse, retrieved, mode);
 }
 
@@ -124,22 +126,24 @@ export async function ragQueryStream(
   query: string,
   mode: ChatMode
 ): Promise<ReadableStream<Uint8Array>> {
-  // 1. Embed the user query
-  const queryEmbedding = await getEmbedding(query);
+  // 1. Embed the user query and retrieve relevant chunks (graceful fallback if RAG unavailable)
+  let retrieved: RetrievedChunk[] = [];
+  let context = "";
+  try {
+    const queryEmbedding = await getEmbedding(query);
+    const collection = await getOrCreateCollection();
+    retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
+    context = retrieved
+      .map(
+        (r, i) =>
+          `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
+      )
+      .join("\n\n---\n\n");
+  } catch {
+    // RAG unavailable (embedding model missing or ChromaDB down) — continue with LLM-only
+  }
 
-  // 2. Retrieve relevant chunks
-  const collection = await getOrCreateCollection();
-  const retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
-
-  // 3. Build context from retrieved chunks
-  const context = retrieved
-    .map(
-      (r, i) =>
-        `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
-    )
-    .join("\n\n---\n\n");
-
-  // 4. Build sources upfront
+  // 2. Build sources upfront
   const sources = buildSources(retrieved);
   const systemPrompt = SYSTEM_PROMPTS[mode];
 

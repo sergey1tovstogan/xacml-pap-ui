@@ -47,8 +47,7 @@ export async function POST(request: NextRequest) {
     logApiRequest("/api/chat", { status: "error", error: msg });
     return NextResponse.json(
       {
-        error:
-          "Failed to generate response. Ensure Ollama and ChromaDB are running.",
+        error: `Failed to generate response: ${msg}. Ensure Ollama and ChromaDB are running.`,
       },
       { status: 500 }
     );

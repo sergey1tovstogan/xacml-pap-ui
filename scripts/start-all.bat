@@ -44,6 +44,21 @@ if !errorlevel!==0 (
     )
 )
 
+:: Pull required models if not already present
+echo [CHECK] Ensuring required Ollama models are available...
+podman exec ollama ollama pull nomic-embed-text >nul 2>&1
+if !errorlevel!==0 (
+    echo [OK]    nomic-embed-text model ready.
+) else (
+    echo [WARN]  Failed to pull nomic-embed-text model.
+)
+podman exec ollama ollama pull llama3.1:8b >nul 2>&1
+if !errorlevel!==0 (
+    echo [OK]    llama3.1:8b model ready.
+) else (
+    echo [WARN]  Failed to pull llama3.1:8b model.
+)
+
 :: ----------------------------------------
 :: 2. Start ChromaDB (Podman)
 :: ----------------------------------------

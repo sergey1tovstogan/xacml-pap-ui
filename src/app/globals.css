@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Temenos-inspired palette (from Composable Explorer) */
-  --color-navy: #0D1B3E;
-  --color-navy-light: #162650;
-  --color-navy-mid: #1E3264;
-  --color-teal: #00B4D8;
-  --color-teal-light: #7DD3E8;
-  --color-teal-dark: #0096B7;
-  --color-purple: #6B3FA0;
-  --color-purple-light: #9B6FD0;
-  --color-purple-dark: #4A2B70;
+  /* Official Temenos Brand Palette */
+  --color-warm-blue: #293276;        /* Temenos Warm Blue — primary brand */
+  --color-warm-blue-light: #3A4590;
+  --color-warm-blue-mid: #3240A0;
+  --color-violet: #8246AF;           /* Temenos Energy Violet — accent */
+  --color-violet-light: #9B6FD0;
+  --color-violet-dark: #6A38A0;
+  --color-green: #5CB8B2;            /* Temenos Renewal Green — secondary */
+  --color-green-light: #7ED0CB;
+  --color-green-dark: #4A9A95;
+  --color-light-blue: #C9D9F2;       /* Temenos Light Blue — backgrounds/highlights */
+  --color-light-blue-muted: #DDE6F5;
 
   /* Surfaces */
   --color-surface: #F5F7FA;
@@ -34,16 +36,16 @@
   --color-error: #EF4444;
   --color-info: #3B82F6;
 
-  /* Phase colors (from Composable Explorer lifecycle) */
-  --color-phase-design: #6B3FA0;
-  --color-phase-build: #00B4D8;
-  --color-phase-deploy: #10B981;
+  /* Phase colors (Temenos brand lifecycle) */
+  --color-phase-design: #8246AF;
+  --color-phase-build: #293276;
+  --color-phase-deploy: #5CB8B2;
   --color-phase-operate: #F59E0B;
 
-  /* Shadows */
-  --shadow-card: 0 1px 3px rgba(13, 27, 62, 0.06), 0 1px 2px rgba(13, 27, 62, 0.04);
-  --shadow-card-hover: 0 4px 12px rgba(13, 27, 62, 0.1), 0 2px 4px rgba(13, 27, 62, 0.06);
-  --shadow-panel: 0 8px 32px rgba(13, 27, 62, 0.12);
+  /* Shadows (based on Warm Blue) */
+  --shadow-card: 0 1px 3px rgba(41, 50, 118, 0.06), 0 1px 2px rgba(41, 50, 118, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(41, 50, 118, 0.1), 0 2px 4px rgba(41, 50, 118, 0.06);
+  --shadow-panel: 0 8px 32px rgba(41, 50, 118, 0.12);
 
   /* Radii */
   --radius-sm: 6px;
@@ -132,11 +134,11 @@ pre code {
 
 /* Selection highlight */
 ::selection {
-  background-color: color-mix(in srgb, var(--color-teal) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-green) 30%, transparent);
 }
 
 /* Focus ring */
 :focus-visible {
-  outline: 2px solid var(--color-teal);
+  outline: 2px solid var(--color-green);
   outline-offset: 2px;
 }

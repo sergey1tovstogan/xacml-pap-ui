@@ -13,7 +13,7 @@ export function Card({ hover = false, className, children, ...props }: CardProps
         "rounded-xl border border-border bg-surface-card p-6",
         "shadow-[var(--shadow-card)]",
         hover &&
-          "transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] hover:border-teal/30 hover:-translate-y-0.5 cursor-pointer",
+          "transition-all duration-200 hover:shadow-[var(--shadow-card-hover)] hover:border-green/30 hover:-translate-y-0.5 cursor-pointer",
         className
       )}
       {...props}
@@ -27,7 +27,7 @@ export function CardIcon({ children, className }: { children: ReactNode; classNa
   return (
     <div
       className={cn(
-        "flex h-12 w-12 items-center justify-center rounded-lg bg-surface text-teal mb-4",
+        "flex h-12 w-12 items-center justify-center rounded-lg bg-surface text-green mb-4",
         className
       )}
     >

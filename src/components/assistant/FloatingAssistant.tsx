@@ -89,8 +89,8 @@ export function FloatingAssistant() {
         className={cn(
           "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-300 cursor-pointer",
           isOpen
-            ? "bg-navy text-white rotate-0"
-            : "bg-teal text-navy hover:scale-105 hover:shadow-xl"
+            ? "bg-warm-blue text-white rotate-0"
+            : "bg-green text-warm-blue hover:scale-105 hover:shadow-xl"
         )}
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
@@ -107,9 +107,9 @@ export function FloatingAssistant() {
             className="fixed bottom-24 right-6 z-50 w-[400px] rounded-2xl border border-border bg-surface-card shadow-[var(--shadow-panel)] overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-navy p-4">
+            <div className="bg-warm-blue p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="h-5 w-5 text-teal" />
+                <Sparkles className="h-5 w-5 text-green" />
                 <h3 className="text-white font-semibold">PAP UI Assistant</h3>
               </div>
               {/* Mode tabs */}
@@ -121,7 +121,7 @@ export function FloatingAssistant() {
                     className={cn(
                       "px-2.5 py-1 text-xs rounded-md transition-colors cursor-pointer",
                       mode === m.id
-                        ? "bg-teal/20 text-teal font-medium"
+                        ? "bg-green/20 text-green font-medium"
                         : "text-white/50 hover:text-white/80 hover:bg-white/5"
                     )}
                   >
@@ -135,7 +135,7 @@ export function FloatingAssistant() {
             <div className="h-[320px] overflow-y-auto p-4 space-y-3">
               {messages.length === 0 && !isLoading && (
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                  <Sparkles className="h-8 w-8 text-teal/30 mb-3" />
+                  <Sparkles className="h-8 w-8 text-green/30 mb-3" />
                   <p className="text-sm text-text-secondary">
                     {currentMode.description}
                   </p>
@@ -150,7 +150,7 @@ export function FloatingAssistant() {
                   className={cn(
                     "max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
                     msg.role === "user"
-                      ? "ml-auto bg-teal/10 text-text-primary"
+                      ? "ml-auto bg-green/10 text-text-primary"
                       : "bg-surface text-text-primary"
                   )}
                 >
@@ -174,12 +174,12 @@ export function FloatingAssistant() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder={currentMode.placeholder}
-                  className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm placeholder:text-text-muted focus:outline-none focus:border-teal"
+                  className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm placeholder:text-text-muted focus:outline-none focus:border-green"
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal text-navy disabled:opacity-40 hover:bg-teal-dark transition-colors cursor-pointer"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-green text-warm-blue disabled:opacity-40 hover:bg-green-dark transition-colors cursor-pointer"
                 >
                   <Send className="h-4 w-4" />
                 </button>

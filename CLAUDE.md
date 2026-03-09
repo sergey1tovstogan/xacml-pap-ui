@@ -1,0 +1,42 @@
+# XACML PAP UI Explorer
+
+<!-- SYNC: This file must stay in sync with .cursorrules. When editing either file, update both. -->
+
+## Stack
+Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-mdx-remote), Ollama + ChromaDB RAG
+
+## Aliases
+`@/*` → `./src/*`, `@content/*` → `./content/*`
+
+## Commands
+`npm run dev | build | lint | ingest`
+
+## Structure
+- `src/app/` — Pages + API routes (App Router)
+- `src/components/{ui,layout,mdx,journey,assistant,docs,home,sandbox}/` — React components
+- `src/config/` — site.ts (nav/sections), ai-modes.ts (chat modes: qa, policy, setup, scripts)
+- `src/hooks/` — useStreamingChat
+- `src/lib/rag/` — RAG pipeline (embeddings, vector-store, llm, prompts, pipeline)
+- `src/lib/utils/cn.ts` — className merging (clsx + tailwind-merge)
+- `src/types/` — TypeScript interfaces
+- `content/` — MDX docs (overview, architecture, integration, policies, sandbox)
+- `scripts/` — ingest.ts, service scripts
+
+## Conventions
+- Server Components by default; `'use client'` only when needed
+- Named exports, no default exports
+- `cn()` from `@/lib/utils/cn` for all className composition
+- Design tokens as CSS custom properties in `globals.css` `@theme` block
+- Temenos brand palette: Warm Blue (#293276), Energy Violet (#8246AF), Renewal Green (#5CB8B2), Light Blue (#C9D9F2) — use CSS vars, never raw hex
+- Framer Motion for all meaningful animation
+- Types imported from `@/types`
+- `import type {}` for type-only imports
+
+## Env
+See `.env.example` — Ollama (URL, model, temp), ChromaDB (URL, collection, embedding model, top_k)
+
+## Extended Guides
+- `.claude/guides/conventions.md` — Full coding patterns & standards
+- `.claude/guides/architecture.md` — System architecture & data flow
+- `.claude/guides/rag-system.md` — RAG pipeline details
+- `.claude/skills/frontend-design.md` — UI design philosophy (reference for all UI work)

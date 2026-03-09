@@ -11,7 +11,7 @@ export function Step({ number, title, last = false, children }: StepProps) {
   return (
     <div className="flex gap-4">
       <div className="flex flex-col items-center shrink-0">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal text-white text-sm font-bold">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green text-white text-sm font-bold">
           {number}
         </span>
         {!last && <div className="w-px h-full bg-border my-1" />}

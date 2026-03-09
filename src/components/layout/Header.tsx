@@ -14,17 +14,17 @@ export function Header() {
   );
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-(--spacing-header) bg-navy">
+    <header className="fixed top-0 left-0 right-0 z-50 h-(--spacing-header) bg-warm-blue">
       <div className="flex h-full items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-teal text-navy font-bold text-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green text-warm-blue font-bold text-sm">
             P
           </div>
           <span className="text-text-inverse font-semibold text-lg tracking-tight">
             Temenos PAP UI Explorer
           </span>
-          <span className="ml-1 rounded-full bg-teal/20 px-2.5 py-0.5 text-xs font-medium text-teal">
+          <span className="ml-1 rounded-full bg-green/20 px-2.5 py-0.5 text-xs font-medium text-green">
             DEMO
           </span>
         </Link>
@@ -46,7 +46,7 @@ export function Header() {
               >
                 {section.title}
                 {isActive && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-8 bg-teal rounded-full" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-8 bg-green rounded-full" />
                 )}
               </Link>
             );
@@ -57,7 +57,7 @@ export function Header() {
         <div className="flex items-center gap-3 shrink-0">
           <Link
             href="/assistant"
-            className="flex items-center gap-2 rounded-md bg-teal/10 px-3 py-1.5 text-sm font-medium text-teal hover:bg-teal/20 transition-colors"
+            className="flex items-center gap-2 rounded-md bg-green/10 px-3 py-1.5 text-sm font-medium text-green hover:bg-green/20 transition-colors"
           >
             <MessageCircleQuestion className="h-4 w-4" />
             AI Assistant

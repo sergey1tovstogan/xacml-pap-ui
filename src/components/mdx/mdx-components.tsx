@@ -77,7 +77,7 @@ export const mdxComponents: MDXComponents = {
   a: ({ children, href, ...props }) => (
     <a
       href={href}
-      className="text-teal hover:text-teal-dark underline underline-offset-2 transition-colors"
+      className="text-green hover:text-green-dark underline underline-offset-2 transition-colors"
       {...props}
     >
       {children}
@@ -85,7 +85,7 @@ export const mdxComponents: MDXComponents = {
   ),
   blockquote: ({ children, ...props }) => (
     <blockquote
-      className="border-l-3 border-teal bg-teal/5 rounded-r-lg px-4 py-3 my-4 text-sm text-text-secondary"
+      className="border-l-3 border-green bg-green/5 rounded-r-lg px-4 py-3 my-4 text-sm text-text-secondary"
       {...props}
     >
       {children}
@@ -100,7 +100,7 @@ export const mdxComponents: MDXComponents = {
     // Inline code (not inside pre — rehype-pretty-code handles pre > code)
     return (
       <code
-        className="bg-surface-hover text-teal-dark rounded px-1.5 py-0.5 text-xs font-mono"
+        className="bg-surface-hover text-green-dark rounded px-1.5 py-0.5 text-xs font-mono"
         {...props}
       >
         {children}

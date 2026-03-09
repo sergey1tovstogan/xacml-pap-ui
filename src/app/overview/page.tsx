@@ -59,7 +59,7 @@ export default function OverviewPage() {
       <div className="mt-10 space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div className="rounded-xl border border-border bg-surface-card p-6">
-            <h3 className="font-bold text-teal text-lg mb-2">
+            <h3 className="font-bold text-green text-lg mb-2">
               PAP UI Approach
             </h3>
             <p className="text-sm text-text-secondary leading-relaxed">
@@ -69,7 +69,7 @@ export default function OverviewPage() {
             </p>
           </div>
           <div className="rounded-xl border border-border bg-surface-card p-6">
-            <h3 className="font-bold text-purple text-lg mb-2">
+            <h3 className="font-bold text-violet text-lg mb-2">
               Traditional RBAC
             </h3>
             <p className="text-sm text-text-secondary leading-relaxed">

@@ -2,15 +2,15 @@ import { cn } from "@/lib/utils/cn";
 
 interface StepBadgeProps {
   step: number;
-  variant?: "teal" | "purple" | "success" | "warning";
+  variant?: "green" | "violet" | "warm-blue" | "light-blue";
   size?: "sm" | "md" | "lg";
 }
 
 const variantStyles = {
-  teal: "bg-teal text-white",
-  purple: "bg-purple text-white",
-  success: "bg-success text-white",
-  warning: "bg-warning text-white",
+  green: "bg-green text-white",
+  violet: "bg-violet text-white",
+  "warm-blue": "bg-warm-blue text-white",
+  "light-blue": "bg-light-blue text-warm-blue",
 };
 
 const sizeStyles = {
@@ -19,7 +19,7 @@ const sizeStyles = {
   lg: "h-10 w-10 text-base",
 };
 
-export function StepBadge({ step, variant = "teal", size = "md" }: StepBadgeProps) {
+export function StepBadge({ step, variant = "green", size = "md" }: StepBadgeProps) {
   return (
     <span
       className={cn(

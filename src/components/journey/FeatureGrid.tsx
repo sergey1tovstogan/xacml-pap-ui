@@ -23,9 +23,9 @@ export function FeatureGrid({ items, columns = 4 }: FeatureGridProps) {
       {items.map((item) => (
         <div
           key={item.title}
-          className="rounded-xl border border-border bg-surface-card p-5 text-center hover:shadow-[var(--shadow-card-hover)] hover:border-teal/20 transition-all duration-200"
+          className="rounded-xl border border-border bg-surface-card p-5 text-center hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200"
         >
-          <div className="flex justify-center mb-3 text-teal">{item.icon}</div>
+          <div className="flex justify-center mb-3 text-green">{item.icon}</div>
           <h3 className="font-semibold text-sm text-text-primary">
             {item.title}
           </h3>

@@ -118,10 +118,10 @@ export default function AssistantPage() {
   return (
     <div className="min-h-[calc(100vh-var(--spacing-header))] flex flex-col">
       {/* Header */}
-      <div className="border-b border-border bg-navy px-6 py-5">
+      <div className="border-b border-border bg-warm-blue px-6 py-5">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-4">
-            <Sparkles className="h-6 w-6 text-teal" />
+            <Sparkles className="h-6 w-6 text-green" />
             <h1 className="text-xl font-bold text-white">
               PAP UI AI Assistant
             </h1>
@@ -138,7 +138,7 @@ export default function AssistantPage() {
                   className={cn(
                     "flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all cursor-pointer",
                     mode === m.id
-                      ? "bg-teal/20 text-teal font-medium"
+                      ? "bg-green/20 text-green font-medium"
                       : "text-white/50 hover:text-white/80 hover:bg-white/5"
                   )}
                 >
@@ -159,7 +159,7 @@ export default function AssistantPage() {
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <Sparkles className="h-12 w-12 text-teal/20 mb-4" />
+              <Sparkles className="h-12 w-12 text-green/20 mb-4" />
               <h2 className="text-lg font-semibold text-text-primary mb-2">
                 {currentMode.label} Mode
               </h2>
@@ -181,7 +181,7 @@ export default function AssistantPage() {
               className={cn(
                 "max-w-[80%] rounded-2xl px-5 py-4",
                 msg.role === "user"
-                  ? "ml-auto bg-teal/10 text-text-primary"
+                  ? "ml-auto bg-green/10 text-text-primary"
                   : "bg-surface border border-border"
               )}
             >
@@ -193,12 +193,12 @@ export default function AssistantPage() {
               {msg.policyXml && (
                 <div className="mt-3 rounded-lg bg-surface-code p-3 overflow-x-auto">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-teal-light font-medium">
+                    <span className="text-xs text-green-light font-medium">
                       Generated XACML Policy
                     </span>
                     <button
                       onClick={() => copyContent(msg.policyXml!, msg.id + "-xml")}
-                      className="text-xs text-gray-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                      className="text-xs text-text-muted hover:text-white flex items-center gap-1 cursor-pointer"
                     >
                       {copiedId === msg.id + "-xml" ? (
                         <Check className="h-3 w-3" />
@@ -207,7 +207,7 @@ export default function AssistantPage() {
                       )}
                     </button>
                   </div>
-                  <pre className="text-xs text-gray-300">{msg.policyXml}</pre>
+                  <pre className="text-xs text-text-inverse/80">{msg.policyXml}</pre>
                 </div>
               )}
 
@@ -215,12 +215,12 @@ export default function AssistantPage() {
               {msg.script && (
                 <div className="mt-3 rounded-lg bg-surface-code p-3 overflow-x-auto">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-purple-light font-medium">
+                    <span className="text-xs text-violet-light font-medium">
                       Generated Script
                     </span>
                     <button
                       onClick={() => copyContent(msg.script!, msg.id + "-script")}
-                      className="text-xs text-gray-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                      className="text-xs text-text-muted hover:text-white flex items-center gap-1 cursor-pointer"
                     >
                       {copiedId === msg.id + "-script" ? (
                         <Check className="h-3 w-3" />
@@ -229,7 +229,7 @@ export default function AssistantPage() {
                       )}
                     </button>
                   </div>
-                  <pre className="text-xs text-gray-300">{msg.script}</pre>
+                  <pre className="text-xs text-text-inverse/80">{msg.script}</pre>
                 </div>
               )}
 
@@ -242,7 +242,7 @@ export default function AssistantPage() {
                       <a
                         key={i}
                         href={src.source}
-                        className="text-xs text-teal hover:text-teal-light underline"
+                        className="text-xs text-green hover:text-green-light underline"
                       >
                         {src.title}
                       </a>
@@ -272,12 +272,12 @@ export default function AssistantPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder={currentMode.placeholder}
-            className="flex-1 rounded-xl border border-border bg-surface px-4 py-3 text-sm placeholder:text-text-muted focus:outline-none focus:border-teal transition-colors"
+            className="flex-1 rounded-xl border border-border bg-surface px-4 py-3 text-sm placeholder:text-text-muted focus:outline-none focus:border-green transition-colors"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal text-navy disabled:opacity-40 hover:bg-teal-dark transition-colors cursor-pointer"
+            className="flex h-11 w-11 items-center justify-center rounded-xl bg-green text-warm-blue disabled:opacity-40 hover:bg-green-dark transition-colors cursor-pointer"
           >
             <Send className="h-5 w-5" />
           </button>

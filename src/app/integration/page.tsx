@@ -6,25 +6,25 @@ const steps = [
     step: 1,
     title: "Keycloak Setup",
     description: "Configure identity provider and role mappings for PAP UI access",
-    color: "teal" as const,
+    color: "green" as const,
   },
   {
     step: 2,
     title: "GC Micro Service",
     description: "Deploy and configure the Generic Config Micro Service for policy storage",
-    color: "purple" as const,
+    color: "violet" as const,
   },
   {
     step: 3,
     title: "TEX Configuration",
     description: "Set up Temenos Explorer with PERMISSIONSURL and role-based policy retrieval",
-    color: "success" as const,
+    color: "warm-blue" as const,
   },
   {
     step: 4,
     title: "Production Deployment",
     description: "Security hardening, scaling, monitoring, and go-live checklist",
-    color: "warning" as const,
+    color: "light-blue" as const,
   },
 ];
 
@@ -68,7 +68,7 @@ export default function IntegrationPage() {
                       ? "tex-configuration"
                       : "production-deployment"
               }`}
-              className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-teal/20 transition-all duration-200 group"
+              className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200 group"
             >
               <div className="flex items-start gap-3">
                 <StepBadge step={s.step} variant={s.color} size="sm" />

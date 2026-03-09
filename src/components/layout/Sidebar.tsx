@@ -17,7 +17,7 @@ export function Sidebar({ section }: SidebarProps) {
       <div className="p-6">
         {/* Section header */}
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-teal">{section.title}</h2>
+          <h2 className="text-lg font-semibold text-green">{section.title}</h2>
           {section.subtitle && (
             <p className="text-sm text-text-secondary mt-0.5">
               {section.subtitle}
@@ -41,7 +41,7 @@ export function Sidebar({ section }: SidebarProps) {
                 className={cn(
                   "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
                   isActive
-                    ? "bg-purple/10 text-purple font-medium border-l-3 border-purple -ml-px"
+                    ? "bg-violet/10 text-violet font-medium border-l-3 border-violet -ml-px"
                     : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"
                 )}
               >
@@ -50,7 +50,7 @@ export function Sidebar({ section }: SidebarProps) {
                   className={cn(
                     "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors",
                     isActive
-                      ? "bg-purple text-white"
+                      ? "bg-violet text-white"
                       : isCompleted
                         ? "bg-success text-white"
                         : "bg-surface text-text-secondary group-hover:bg-border group-hover:text-text-primary"

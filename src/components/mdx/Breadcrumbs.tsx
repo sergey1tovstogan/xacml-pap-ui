@@ -15,7 +15,7 @@ export function Breadcrumbs({ section, title }: BreadcrumbsProps) {
       aria-label="Breadcrumb"
       className="flex items-center gap-1.5 text-xs text-text-muted mb-6"
     >
-      <Link href="/" className="hover:text-teal transition-colors">
+      <Link href="/" className="hover:text-green transition-colors">
         Home
       </Link>
       <ChevronRight className="h-3 w-3" />
@@ -23,7 +23,7 @@ export function Breadcrumbs({ section, title }: BreadcrumbsProps) {
         <>
           <Link
             href={sectionConfig.href}
-            className="hover:text-teal transition-colors"
+            className="hover:text-green transition-colors"
           >
             {sectionConfig.title}
           </Link>

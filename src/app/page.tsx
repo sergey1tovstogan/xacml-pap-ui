@@ -23,40 +23,40 @@ const sections = [
     description: "Understand XACML and PAP UI fundamentals",
     href: "/overview",
     icon: BookOpen,
-    color: "text-teal",
-    bg: "bg-teal/10",
+    color: "text-green",
+    bg: "bg-green/10",
   },
   {
     title: "Architecture",
     description: "How PAP, PDP, PEP, and PIP connect",
     href: "/architecture",
     icon: Layers,
-    color: "text-purple",
-    bg: "bg-purple/10",
+    color: "text-violet",
+    bg: "bg-violet/10",
   },
   {
     title: "Integration",
     description: "Keycloak, GC MS, and TEX configuration",
     href: "/integration",
     icon: Settings,
-    color: "text-info",
-    bg: "bg-info/10",
+    color: "text-warm-blue",
+    bg: "bg-warm-blue/10",
   },
   {
     title: "Policies",
     description: "Create and manage XACML policies",
     href: "/policies",
     icon: FileCode,
-    color: "text-success",
-    bg: "bg-success/10",
+    color: "text-green-dark",
+    bg: "bg-green/10",
   },
   {
     title: "Sandbox",
     description: "Test policies with simulated requests",
     href: "/sandbox",
     icon: FlaskConical,
-    color: "text-warning",
-    bg: "bg-warning/10",
+    color: "text-violet",
+    bg: "bg-light-blue/30",
   },
 ];
 
@@ -98,25 +98,25 @@ const aiCapabilities = [
     icon: MessageCircle,
     title: "Q&A Assistant",
     description: "Ask anything about PAP UI and XACML",
-    color: "border-teal",
+    color: "border-green",
   },
   {
     icon: FileCode,
     title: "Policy Generator",
     description: "Describe access rules, get valid XACML",
-    color: "border-purple",
+    color: "border-violet",
   },
   {
     icon: BookOpen,
     title: "Guided Setup",
     description: "Step-by-step configuration walkthrough",
-    color: "border-success",
+    color: "border-warm-blue",
   },
   {
     icon: Terminal,
     title: "Script Generator",
     description: "Ready-to-use API calls and scripts",
-    color: "border-warning",
+    color: "border-light-blue",
   },
 ];
 
@@ -124,16 +124,16 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-navy py-20">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-teal)_0%,_transparent_50%)] opacity-10" />
+      <section className="relative overflow-hidden bg-warm-blue py-20">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-green)_0%,_transparent_50%)] opacity-10" />
         <div className="relative mx-auto max-w-5xl px-6 text-center">
-          <Badge variant="teal" className="mb-6">
+          <Badge variant="green" className="mb-6">
             Policy Administration Point
           </Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
             XACML Authorization
             <br />
-            <span className="text-teal">Made Simple</span>
+            <span className="text-green">Made Simple</span>
           </h1>
           <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
             Your comprehensive guide to Temenos PAP UI and XACML integration.
@@ -143,7 +143,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/overview"
-              className="inline-flex items-center gap-2 rounded-lg bg-teal px-6 py-3 font-semibold text-navy hover:bg-teal-dark transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-green px-6 py-3 font-semibold text-warm-blue hover:bg-green-dark transition-colors"
             >
               Get Started
               <ArrowRight className="h-4 w-4" />
@@ -163,7 +163,7 @@ export default function HomePage() {
       <section className="py-16 px-6">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-10">
-            <Badge variant="purple" className="mb-3">
+            <Badge variant="violet" className="mb-3">
               Why XACML?
             </Badge>
             <h2 className="text-2xl font-bold text-text-primary">
@@ -174,9 +174,9 @@ export default function HomePage() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-teal/20 transition-all duration-200"
+                className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200"
               >
-                <feature.icon className="h-6 w-6 text-teal mb-3" />
+                <feature.icon className="h-6 w-6 text-green mb-3" />
                 <h3 className="font-semibold text-sm text-text-primary mb-1">
                   {feature.title}
                 </h3>
@@ -193,7 +193,7 @@ export default function HomePage() {
       <section className="py-16 px-6 bg-surface-card border-y border-border">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-10">
-            <Badge variant="teal" className="mb-3">
+            <Badge variant="green" className="mb-3">
               AI-Powered
             </Badge>
             <h2 className="text-2xl font-bold text-text-primary">
@@ -210,7 +210,7 @@ export default function HomePage() {
                 key={cap.title}
                 className={`rounded-xl border-t-3 ${cap.color} border border-border bg-white p-5 text-center`}
               >
-                <cap.icon className="h-8 w-8 text-navy mx-auto mb-3" />
+                <cap.icon className="h-8 w-8 text-warm-blue mx-auto mb-3" />
                 <h3 className="font-semibold text-sm text-text-primary mb-1">
                   {cap.title}
                 </h3>
@@ -236,7 +236,7 @@ export default function HomePage() {
               <Link
                 key={section.title}
                 href={section.href}
-                className="group rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-teal/20 transition-all duration-200"
+                className="group rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200"
               >
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-lg ${section.bg} mb-3`}
@@ -249,7 +249,7 @@ export default function HomePage() {
                 <p className="text-xs text-text-secondary leading-relaxed">
                   {section.description}
                 </p>
-                <ArrowRight className="h-4 w-4 text-teal mt-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ArrowRight className="h-4 w-4 text-green mt-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </Link>
             ))}
           </div>
@@ -257,7 +257,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-navy py-8 px-6">
+      <footer className="border-t border-border bg-warm-blue py-8 px-6">
         <div className="mx-auto max-w-5xl flex items-center justify-between text-sm text-white/40">
           <p>Temenos PAP UI Explorer &mdash; XACML Policy Administration</p>
           <p>Powered by Temenos</p>

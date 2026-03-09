@@ -41,11 +41,11 @@ export default function PoliciesPage() {
           <Link
             key={topic.slug}
             href={`/policies/${topic.slug}`}
-            className="flex items-start gap-4 rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-teal/20 transition-all duration-200 group"
+            className="flex items-start gap-4 rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200 group"
           >
-            <StepBadge step={topic.step} variant="teal" size="md" />
+            <StepBadge step={topic.step} variant="green" size="md" />
             <div>
-              <h3 className="font-semibold text-text-primary text-sm mb-1 group-hover:text-teal transition-colors">
+              <h3 className="font-semibold text-text-primary text-sm mb-1 group-hover:text-green transition-colors">
                 {topic.title}
               </h3>
               <p className="text-xs text-text-secondary leading-relaxed">

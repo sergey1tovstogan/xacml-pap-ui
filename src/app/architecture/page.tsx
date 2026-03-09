@@ -7,7 +7,7 @@ const components = [
     name: "Policy Administration Point",
     description:
       "Where policies are created and managed. In Temenos, this is the PAP UI within Temenos Explorer.",
-    color: "bg-teal/10 text-teal",
+    color: "bg-green/10 text-green",
     phase: "Design",
   },
   {
@@ -15,7 +15,7 @@ const components = [
     name: "Policy Retrieval Point",
     description:
       "Retrieves policies from storage. In Temenos, policies are stored in the Generic Config Micro Service.",
-    color: "bg-purple/10 text-purple",
+    color: "bg-violet/10 text-violet",
     phase: "Build",
   },
   {
@@ -23,7 +23,7 @@ const components = [
     name: "Policy Decision Point",
     description:
       "Evaluates access requests against policies and returns Permit, Deny, or NotApplicable.",
-    color: "bg-info/10 text-info",
+    color: "bg-warm-blue/10 text-warm-blue",
     phase: "Deploy",
   },
   {
@@ -31,7 +31,7 @@ const components = [
     name: "Policy Enforcement Point",
     description:
       "Intercepts access requests and enforces the PDP's decision. In Temenos, this is the API Gateway.",
-    color: "bg-success/10 text-success",
+    color: "bg-green/10 text-green-dark",
     phase: "Deploy",
   },
   {
@@ -39,7 +39,7 @@ const components = [
     name: "Policy Information Point",
     description:
       "Provides additional attribute data needed for policy evaluation (user attributes, resource metadata, etc.).",
-    color: "bg-warning/10 text-warning",
+    color: "bg-light-blue/30 text-warm-blue",
     phase: "Operate",
   },
 ];
@@ -54,17 +54,17 @@ export default function ArchitecturePage() {
       {/* Timeline/flow */}
       <div className="mt-8 space-y-0">
         <div className="flex items-center gap-3 mb-6">
-          <StepBadge step={1} variant="teal" size="sm" />
+          <StepBadge step={1} variant="green" size="sm" />
           <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">
             Design &mdash; Author policies
           </span>
-          <div className="flex-1 border-t border-dashed border-teal/30" />
-          <StepBadge step={2} variant="purple" size="sm" />
+          <div className="flex-1 border-t border-dashed border-green/30" />
+          <StepBadge step={2} variant="violet" size="sm" />
           <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">
             Store
           </span>
-          <div className="flex-1 border-t border-dashed border-purple/30" />
-          <StepBadge step={3} variant="success" size="sm" />
+          <div className="flex-1 border-t border-dashed border-violet/30" />
+          <StepBadge step={3} variant="warm-blue" size="sm" />
           <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">
             Evaluate &amp; Enforce
           </span>
@@ -105,10 +105,10 @@ export default function ArchitecturePage() {
 
       {/* Request flow */}
       <div className="mt-8 rounded-xl border border-border bg-surface-code p-6">
-        <h3 className="font-semibold text-teal-light text-sm mb-4">
+        <h3 className="font-semibold text-green-light text-sm mb-4">
           Authorization Request Flow
         </h3>
-        <pre className="text-xs text-gray-400 leading-relaxed">
+        <pre className="text-xs text-text-muted leading-relaxed">
 {`User Request → PEP (API Gateway)
     │
     ├── PEP extracts subject, resource, action attributes

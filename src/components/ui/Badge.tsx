@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils/cn";
 
-type BadgeVariant = "teal" | "purple" | "success" | "warning" | "default";
+type BadgeVariant = "green" | "violet" | "warm-blue" | "light-blue" | "default";
 
 interface BadgeProps {
   variant?: BadgeVariant;
@@ -10,10 +10,10 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  teal: "bg-teal/10 text-teal",
-  purple: "bg-purple/10 text-purple",
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
+  green: "bg-green/10 text-green",
+  violet: "bg-violet/10 text-violet",
+  "warm-blue": "bg-warm-blue/10 text-warm-blue",
+  "light-blue": "bg-light-blue/30 text-warm-blue",
   default: "bg-surface text-text-secondary",
 };
 

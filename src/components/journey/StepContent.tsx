@@ -13,7 +13,7 @@ export function StepContent({ step, title, description, children }: StepContentP
     <div>
       <div className="mb-8">
         <div className="flex justify-center mb-4">
-          <StepBadge step={step} variant="teal" size="lg" />
+          <StepBadge step={step} variant="green" size="lg" />
         </div>
         <h1 className="text-3xl font-bold text-text-primary text-center mb-2">
           {title}

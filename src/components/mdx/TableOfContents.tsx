@@ -15,7 +15,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           <li key={item.slug}>
             <a
               href={`#${item.slug}`}
-              className={`block text-sm text-text-secondary hover:text-teal transition-colors ${
+              className={`block text-sm text-text-secondary hover:text-green transition-colors ${
                 item.depth === 3 ? "pl-4" : ""
               }`}
             >

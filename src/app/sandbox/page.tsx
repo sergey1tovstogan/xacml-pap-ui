@@ -107,7 +107,7 @@ export default function SandboxPage() {
     <div>
       <div className="mb-6">
         <div className="flex justify-center mb-4">
-          <span className="inline-flex items-center rounded-full bg-teal text-white h-10 w-10 justify-center font-bold">
+          <span className="inline-flex items-center rounded-full bg-green text-white h-10 w-10 justify-center font-bold">
             1
           </span>
         </div>
@@ -121,10 +121,10 @@ export default function SandboxPage() {
       </div>
 
       {/* Advanced Sandbox Banner */}
-      <div className="mb-6 rounded-xl border border-purple/30 bg-purple/5 p-5">
+      <div className="mb-6 rounded-xl border border-violet/30 bg-violet/5 p-5">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple/10">
-            <Wrench className="h-5 w-5 text-purple" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet/10">
+            <Wrench className="h-5 w-5 text-violet" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-text-primary mb-1">
@@ -136,8 +136,8 @@ export default function SandboxPage() {
               detailed decision trace logging. For now, use the simplified evaluator below to
               test basic policy matching.
             </p>
-            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-purple/10 px-3 py-1 text-xs font-medium text-purple">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple animate-pulse" />
+            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-violet/10 px-3 py-1 text-xs font-medium text-violet">
+              <span className="h-1.5 w-1.5 rounded-full bg-violet animate-pulse" />
               Development ongoing
             </span>
           </div>
@@ -166,7 +166,7 @@ export default function SandboxPage() {
           <textarea
             value={policy}
             onChange={(e) => setPolicy(e.target.value)}
-            className="w-full h-[400px] p-4 font-mono text-xs bg-surface-code text-gray-300 resize-none focus:outline-none"
+            className="w-full h-[400px] p-4 font-mono text-xs bg-surface-code text-text-inverse/80 resize-none focus:outline-none"
             spellCheck={false}
           />
         </div>
@@ -183,7 +183,7 @@ export default function SandboxPage() {
             <textarea
               value={request}
               onChange={(e) => setRequest(e.target.value)}
-              className="w-full h-[180px] p-4 font-mono text-xs bg-surface-code text-gray-300 resize-none focus:outline-none"
+              className="w-full h-[180px] p-4 font-mono text-xs bg-surface-code text-text-inverse/80 resize-none focus:outline-none"
               spellCheck={false}
             />
           </div>
@@ -234,8 +234,8 @@ export default function SandboxPage() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-xl border border-teal/30 bg-teal/5 p-4 text-sm text-text-secondary">
-        <strong className="text-teal">Note:</strong> This sandbox uses a
+      <div className="mt-6 rounded-xl border border-green/30 bg-green/5 p-4 text-sm text-text-secondary">
+        <strong className="text-green">Note:</strong> This sandbox uses a
         simplified evaluation engine for demonstration. For production policy
         testing, use the full XACML PDP or the AI Assistant for complex evaluation.
       </div>

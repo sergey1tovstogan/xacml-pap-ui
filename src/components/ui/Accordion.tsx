@@ -15,7 +15,7 @@ export function Accordion({
   title,
   children,
   defaultOpen = false,
-  accentColor = "teal",
+  accentColor = "green",
 }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -33,7 +33,7 @@ export function Accordion({
         <h3 className="font-semibold text-text-primary">{title}</h3>
         <ChevronDown
           className={cn(
-            "h-5 w-5 text-teal transition-transform duration-200",
+            "h-5 w-5 text-green transition-transform duration-200",
             isOpen && "rotate-180"
           )}
         />

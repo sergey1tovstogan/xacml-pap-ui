@@ -13,7 +13,7 @@ export function Sidebar({ section }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-(--spacing-header) bottom-0 w-(--spacing-sidebar) border-r border-border bg-surface-card overflow-y-auto">
+    <aside aria-label="Section navigation" className="fixed left-0 top-(--spacing-header) bottom-0 w-(--spacing-sidebar) border-r border-border bg-surface-card overflow-y-auto">
       <div className="p-6">
         {/* Section header */}
         <div className="mb-6">
@@ -26,7 +26,7 @@ export function Sidebar({ section }: SidebarProps) {
         </div>
 
         {/* Step navigation */}
-        <nav className="space-y-1">
+        <nav aria-label="Page navigation" className="space-y-1">
           {section.items.map((item, index) => {
             const href = `${section.href}/${item.slug}`;
             const isActive =
@@ -38,6 +38,7 @@ export function Sidebar({ section }: SidebarProps) {
               <Link
                 key={item.slug}
                 href={href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
                   isActive

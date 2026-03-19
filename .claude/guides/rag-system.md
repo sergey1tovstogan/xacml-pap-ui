@@ -45,7 +45,27 @@ Process: read files → extract text → chunk → embed with nomic-embed-text �
 7. Request logged via pino (`src/lib/logger.ts`)
 8. SSE stream renders in chat UI
 
+## Performance Targets
+| Operation | Target |
+|-----------|--------|
+| LLM generation (full response) | < 5s |
+| Vector retrieval (ChromaDB query) | < 200ms |
+| Embedding generation (single query) | < 500ms |
+
+## Model Alternatives
+The default `llama3.1:8b` is lightweight and suitable for most use cases. For improved structured XML/XACML output quality, consider:
+- `qwen2.5:14b` — stronger reasoning, excellent XML generation, good local performance
+- `qwen2.5:32b` — best quality for complex policy logic (requires more VRAM)
+
+Change via `LLM_MODEL` env var — no code changes needed.
+
 ## Adding Content
 1. Add `.mdx` files to `content/[section]/` or docs to `docs/`
 2. Run `npm run ingest` to re-embed
 3. New content is immediately available for RAG queries
+
+## Expanding Knowledge Sources
+To improve RAG quality beyond the bundled MDX documentation, consider adding to `docs/`:
+- XACML 3.0 specification excerpts (core spec, policy language reference)
+- Real-world XACML policy examples (loan policies, access control, KYC)
+- Attribute naming conventions and policy engineering guidelines

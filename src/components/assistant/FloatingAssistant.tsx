@@ -86,6 +86,8 @@ export function FloatingAssistant() {
       {/* Floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Close AI assistant" : "Open AI assistant"}
+        aria-expanded={isOpen}
         className={cn(
           "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-300 cursor-pointer",
           isOpen
@@ -104,7 +106,7 @@ export function FloatingAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-[400px] rounded-2xl border border-border bg-surface-card shadow-[var(--shadow-panel)] overflow-hidden"
+            className="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] sm:w-[400px] rounded-2xl border border-border bg-surface-card shadow-[var(--shadow-panel)] overflow-hidden"
           >
             {/* Header */}
             <div className="bg-warm-blue p-4">
@@ -132,7 +134,7 @@ export function FloatingAssistant() {
             </div>
 
             {/* Messages */}
-            <div className="h-[320px] overflow-y-auto p-4 space-y-3">
+            <div className="h-[320px] overflow-y-auto p-4 space-y-3" aria-live="polite" aria-label="Chat messages">
               {messages.length === 0 && !isLoading && (
                 <div className="flex flex-col items-center justify-center h-full text-center">
                   <Sparkles className="h-8 w-8 text-green/30 mb-3" />
@@ -174,11 +176,13 @@ export function FloatingAssistant() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder={currentMode.placeholder}
+                  aria-label="Type your message"
                   className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm placeholder:text-text-muted focus:outline-none focus:border-green"
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
+                  aria-label="Send message"
                   className="flex h-9 w-9 items-center justify-center rounded-lg bg-green text-warm-blue disabled:opacity-40 hover:bg-green-dark transition-colors cursor-pointer"
                 >
                   <Send className="h-4 w-4" />

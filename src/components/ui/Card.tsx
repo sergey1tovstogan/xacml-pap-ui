@@ -23,11 +23,26 @@ export function Card({ hover = false, className, children, ...props }: CardProps
   );
 }
 
-export function CardIcon({ children, className }: { children: ReactNode; className?: string }) {
+const iconColorMap: Record<string, string> = {
+  green: "text-green",
+  violet: "text-violet",
+  "warm-blue": "text-warm-blue",
+};
+
+export function CardIcon({
+  children,
+  className,
+  color = "green",
+}: {
+  children: ReactNode;
+  className?: string;
+  color?: string;
+}) {
   return (
     <div
       className={cn(
-        "flex h-12 w-12 items-center justify-center rounded-lg bg-surface text-green mb-4",
+        "flex h-12 w-12 items-center justify-center rounded-lg bg-surface mb-4",
+        iconColorMap[color] ?? "text-green",
         className
       )}
     >

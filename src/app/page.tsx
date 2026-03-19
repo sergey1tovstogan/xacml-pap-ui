@@ -15,7 +15,7 @@ import {
   Terminal,
   MessageCircle,
 } from "lucide-react";
-import { Badge } from "@/components/ui";
+import { Badge, MotionSection, MotionItem, MotionFadeIn } from "@/components/ui";
 
 const sections = [
   {
@@ -126,133 +126,146 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-warm-blue py-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-green)_0%,_transparent_50%)] opacity-10" />
-        <div className="relative mx-auto max-w-5xl px-6 text-center">
-          <Badge variant="green" className="mb-6">
-            Policy Administration Point
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
-            XACML Authorization
-            <br />
-            <span className="text-green">Made Simple</span>
-          </h1>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Your comprehensive guide to Temenos PAP UI and XACML integration.
-            From understanding core concepts to deploying production policies
-            &mdash; with an AI assistant to help every step of the way.
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <Link
-              href="/overview"
-              className="inline-flex items-center gap-2 rounded-lg bg-green px-6 py-3 font-semibold text-warm-blue hover:bg-green-dark transition-colors"
-            >
-              Get Started
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/assistant"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 font-semibold text-white hover:bg-white/10 transition-colors"
-            >
-              <Sparkles className="h-4 w-4" />
-              AI Assistant
-            </Link>
-          </div>
-        </div>
+        <MotionSection className="relative mx-auto max-w-5xl px-6 text-center">
+          <MotionItem>
+            <Badge variant="green" className="mb-6">
+              Policy Administration Point
+            </Badge>
+          </MotionItem>
+          <MotionItem>
+            <h1 className="font-[family-name:var(--font-display)] text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+              XACML Authorization
+              <br />
+              <span className="text-green">Made Simple</span>
+            </h1>
+          </MotionItem>
+          <MotionItem>
+            <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Your comprehensive guide to Temenos PAP UI and XACML integration.
+              From understanding core concepts to deploying production policies
+              &mdash; with an AI assistant to help every step of the way.
+            </p>
+          </MotionItem>
+          <MotionItem>
+            <div className="flex items-center justify-center gap-4">
+              <Link
+                href="/overview"
+                className="inline-flex items-center gap-2 rounded-lg bg-green px-6 py-3 font-semibold text-warm-blue hover:bg-green-dark transition-colors"
+              >
+                Get Started
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/assistant"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 font-semibold text-white hover:bg-white/10 transition-colors"
+              >
+                <Sparkles className="h-4 w-4" />
+                AI Assistant
+              </Link>
+            </div>
+          </MotionItem>
+        </MotionSection>
       </section>
 
       {/* Feature grid */}
-      <section className="py-16 px-6">
+      <section className="relative py-16 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--color-violet)_0%,_transparent_60%)] opacity-[0.03]" />
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-10">
+          <MotionFadeIn className="text-center mb-10">
             <Badge variant="violet" className="mb-3">
               Why XACML?
             </Badge>
-            <h2 className="text-2xl font-bold text-text-primary">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-text-primary">
               Enterprise-Grade Authorization
             </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          </MotionFadeIn>
+          <MotionSection className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {features.map((feature) => (
-              <div
+              <MotionItem
                 key={feature.title}
-                className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200"
               >
-                <feature.icon className="h-6 w-6 text-green mb-3" />
-                <h3 className="font-semibold text-sm text-text-primary mb-1">
-                  {feature.title}
-                </h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+                <div className="rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200 h-full">
+                  <feature.icon className="h-6 w-6 text-green mb-3" />
+                  <h3 className="font-semibold text-sm text-text-primary mb-1">
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              </MotionItem>
             ))}
-          </div>
+          </MotionSection>
         </div>
       </section>
 
       {/* AI Capabilities */}
       <section className="py-16 px-6 bg-surface-card border-y border-border">
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-10">
+          <MotionFadeIn className="text-center mb-10">
             <Badge variant="green" className="mb-3">
               AI-Powered
             </Badge>
-            <h2 className="text-2xl font-bold text-text-primary">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-text-primary">
               Your Intelligent XACML Assistant
             </h2>
             <p className="text-text-secondary mt-2 max-w-xl mx-auto">
               Don&apos;t know XACML? No problem. Describe what you need in plain
               English and let the AI handle the rest.
             </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          </MotionFadeIn>
+          <MotionSection className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {aiCapabilities.map((cap) => (
-              <div
-                key={cap.title}
-                className={`rounded-xl border-t-3 ${cap.color} border border-border bg-white p-5 text-center`}
-              >
-                <cap.icon className="h-8 w-8 text-warm-blue mx-auto mb-3" />
-                <h3 className="font-semibold text-sm text-text-primary mb-1">
-                  {cap.title}
-                </h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  {cap.description}
-                </p>
-              </div>
+              <MotionItem key={cap.title}>
+                <div
+                  className={`rounded-xl border-t-3 ${cap.color} border border-border bg-white p-5 text-center h-full`}
+                >
+                  <cap.icon className="h-8 w-8 text-warm-blue mx-auto mb-3" />
+                  <h3 className="font-semibold text-sm text-text-primary mb-1">
+                    {cap.title}
+                  </h3>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    {cap.description}
+                  </p>
+                </div>
+              </MotionItem>
             ))}
-          </div>
+          </MotionSection>
         </div>
       </section>
 
       {/* Section links */}
-      <section className="py-16 px-6">
+      <section className="relative py-16 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--color-light-blue)_0%,_transparent_50%)] opacity-20" />
         <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-text-primary">
+          <MotionFadeIn className="text-center mb-10">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-text-primary">
               Explore the Documentation
             </h2>
-          </div>
-          <div className="grid md:grid-cols-5 gap-4">
+          </MotionFadeIn>
+          <MotionSection className="grid md:grid-cols-5 gap-4">
             {sections.map((section) => (
-              <Link
-                key={section.title}
-                href={section.href}
-                className="group rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200"
-              >
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg ${section.bg} mb-3`}
+              <MotionItem key={section.title}>
+                <Link
+                  href={section.href}
+                  className="group block rounded-xl border border-border bg-surface-card p-5 hover:shadow-[var(--shadow-card-hover)] hover:border-green/20 transition-all duration-200 h-full"
                 >
-                  <section.icon className={`h-5 w-5 ${section.color}`} />
-                </div>
-                <h3 className="font-semibold text-sm text-text-primary mb-1">
-                  {section.title}
-                </h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  {section.description}
-                </p>
-                <ArrowRight className="h-4 w-4 text-green mt-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Link>
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${section.bg} mb-3`}
+                  >
+                    <section.icon className={`h-5 w-5 ${section.color}`} />
+                  </div>
+                  <h3 className="font-semibold text-sm text-text-primary mb-1">
+                    {section.title}
+                  </h3>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    {section.description}
+                  </p>
+                  <ArrowRight className="h-4 w-4 text-green mt-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </MotionItem>
             ))}
-          </div>
+          </MotionSection>
         </div>
       </section>
 

@@ -155,7 +155,7 @@ export default function AssistantPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="flex-1 overflow-y-auto px-6 py-6" aria-live="polite" aria-label="Chat messages">
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -198,6 +198,7 @@ export default function AssistantPage() {
                     </span>
                     <button
                       onClick={() => copyContent(msg.policyXml!, msg.id + "-xml")}
+                      aria-label="Copy policy XML"
                       className="text-xs text-text-muted hover:text-white flex items-center gap-1 cursor-pointer"
                     >
                       {copiedId === msg.id + "-xml" ? (
@@ -220,6 +221,7 @@ export default function AssistantPage() {
                     </span>
                     <button
                       onClick={() => copyContent(msg.script!, msg.id + "-script")}
+                      aria-label="Copy generated script"
                       className="text-xs text-text-muted hover:text-white flex items-center gap-1 cursor-pointer"
                     >
                       {copiedId === msg.id + "-script" ? (
@@ -272,11 +274,13 @@ export default function AssistantPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder={currentMode.placeholder}
+            aria-label="Type your message"
             className="flex-1 rounded-xl border border-border bg-surface px-4 py-3 text-sm placeholder:text-text-muted focus:outline-none focus:border-green transition-colors"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
+            aria-label="Send message"
             className="flex h-11 w-11 items-center justify-center rounded-xl bg-green text-warm-blue disabled:opacity-40 hover:bg-green-dark transition-colors cursor-pointer"
           >
             <Send className="h-5 w-5" />

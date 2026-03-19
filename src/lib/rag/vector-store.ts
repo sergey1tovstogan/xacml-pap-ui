@@ -15,6 +15,7 @@ export async function getOrCreateCollection(): Promise<Collection> {
   return chroma.getOrCreateCollection({
     name: COLLECTION_NAME,
     metadata: { "hnsw:space": "cosine" },
+    embedding_function: null,
   });
 }
 

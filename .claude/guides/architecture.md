@@ -46,3 +46,8 @@ Defined in `src/config/site.ts` — 5 sections:
 - `Sidebar` — per-section layout, reads `siteConfig` for nav items
 - MDX pages — `content.ts` for loading, `mdx-components.tsx` for custom rendering
 - AI modes — `ai-modes.ts` defines 4 chat modes (qa, policy, setup, scripts) with labels, icons, placeholders
+
+## Future Enhancements
+- **Policy graph visualization** — visual representation of policy hierarchies and rule relationships
+- **Decision tree visualization** — interactive tree showing evaluation paths for a given request
+- **Policy diff engine** — compare two policies and highlight structural/semantic differences

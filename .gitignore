@@ -36,3 +36,4 @@ next-env.d.ts
 # user docs for RAG ingestion
 /docs/*
 !/docs/.gitkeep
+suggestions/

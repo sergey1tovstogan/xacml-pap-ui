@@ -30,13 +30,14 @@ export function Header() {
         </Link>
 
         {/* Navigation tabs */}
-        <nav className="flex items-center gap-1">
+        <nav aria-label="Main navigation" className="flex items-center gap-1">
           {siteConfig.sections.map((section) => {
             const isActive = activeSection?.id === section.id;
             return (
               <Link
                 key={section.id}
                 href={section.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
                   isActive

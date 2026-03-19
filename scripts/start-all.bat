@@ -44,20 +44,9 @@ if !errorlevel!==0 (
     )
 )
 
-:: Pull required models if not already present
-echo [CHECK] Ensuring required Ollama models are available...
-podman exec ollama ollama pull nomic-embed-text >nul 2>&1
-if !errorlevel!==0 (
-    echo [OK]    nomic-embed-text model ready.
-) else (
-    echo [WARN]  Failed to pull nomic-embed-text model.
-)
-podman exec ollama ollama pull llama3.1:8b >nul 2>&1
-if !errorlevel!==0 (
-    echo [OK]    llama3.1:8b model ready.
-) else (
-    echo [WARN]  Failed to pull llama3.1:8b model.
-)
+:: Pull required models in background (does not block frontend startup)
+echo [INFO]  Pulling Ollama models in background...
+start "Ollama Model Pull" /min cmd /c "%~dp0pull-models.bat"
 
 :: ----------------------------------------
 :: 2. Start ChromaDB (Podman)
@@ -109,16 +98,16 @@ if not exist "node_modules" (
     echo.
 )
 
-:: Kill any existing Next.js dev server on port 3000
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000 ^| findstr LISTENING 2^>nul') do (
-    echo [INFO] Stopping existing process on port 3000 (PID: %%a)
+:: Kill any existing Next.js dev server on port 3459
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3459 ^| findstr LISTENING 2^>nul') do (
+    echo [INFO] Stopping existing process on port 3459 (PID: %%a)
     taskkill /PID %%a /F >nul 2>&1
 )
 
-echo [INFO] Starting Next.js dev server on http://localhost:3000
+echo [INFO] Starting Next.js dev server on http://localhost:3459
 echo [INFO] Press Ctrl+C to stop
 echo.
 
-start "" http://localhost:3000
+start "" http://localhost:3459
 
-call npx next dev
+call npx next dev --port 3459

@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { aiModes } from "@/config/ai-modes";
 import { TypingIndicator } from "@/components/ui/TypingIndicator";
+import { ExtractionPanel } from "@/components/assistant/ExtractionPanel";
 import { useStreamingChat } from "@/hooks/useStreamingChat";
 import type { ChatMode, Message } from "@/types";
 
@@ -84,6 +85,9 @@ export default function AssistantPage() {
         onSources: (sources) => {
           updateStreamingMessage({ sources });
         },
+        onExtraction: (extraction) => {
+          updateStreamingMessage({ extraction });
+        },
         onToken: (token) => {
           accumulated += token;
           updateStreamingMessage({ content: accumulated });
@@ -93,7 +97,7 @@ export default function AssistantPage() {
         },
         onError: (error) => {
           updateStreamingMessage({
-            content: `Sorry, an error occurred: ${error}\n\nMake sure Ollama and ChromaDB are running.`,
+            content: `Sorry, an error occurred: ${error}\n\nMake sure the OpenAI API key is set and ChromaDB is running.`,
           });
         },
       });
@@ -101,7 +105,7 @@ export default function AssistantPage() {
       const errorContent =
         error instanceof Error ? error.message : "An unexpected error occurred";
       updateStreamingMessage({
-        content: `Sorry, I couldn't generate a response. ${errorContent}\n\nMake sure Ollama and ChromaDB are running.`,
+        content: `Sorry, I couldn't generate a response. ${errorContent}\n\nMake sure the OpenAI API key is set and ChromaDB is running.`,
       });
     } finally {
       streamingMsgId.current = null;
@@ -165,12 +169,12 @@ export default function AssistantPage() {
               </h2>
               <p className="text-sm text-text-secondary max-w-md">
                 {currentMode.description}. Type your question below to get
-                started. The AI assistant will use local Ollama + RAG to provide
-                accurate answers based on the documentation.
+                started. The AI assistant uses OpenAI + RAG to provide
+                accurate, ontology-grounded answers.
               </p>
               <div className="mt-6 rounded-xl border border-warning/30 bg-warning/5 px-4 py-3 text-xs text-text-secondary">
                 <strong className="text-warning">Setup required:</strong>{" "}
-                Connect Ollama (llama3.1:8b) and ChromaDB for full functionality.
+                Set OPENAI_API_KEY and connect ChromaDB for full functionality.
               </div>
             </div>
           )}
@@ -188,6 +192,14 @@ export default function AssistantPage() {
               <p className="text-sm leading-relaxed whitespace-pre-wrap">
                 {msg.content}
               </p>
+
+              {/* Extraction Pipeline Results */}
+              {msg.extraction && (
+                <ExtractionPanel
+                  extraction={msg.extraction}
+                  validation={msg.validation}
+                />
+              )}
 
               {/* Policy XML output */}
               {msg.policyXml && (

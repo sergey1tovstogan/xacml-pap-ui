@@ -4,6 +4,8 @@ import { getEmbedding } from "./embeddings";
 import { getOrCreateCollection, queryDocuments, type RetrievedChunk } from "./vector-store";
 import { generateResponse, generateResponseStream } from "./llm";
 import { SYSTEM_PROMPTS } from "./prompts";
+import { extractPolicyIntent, formatExtractionContext } from "./extractor";
+import { validatePolicy } from "@/lib/ontology/validator";
 
 const xmlValidator = new XMLParser({ allowBooleanAttributes: true });
 
@@ -55,6 +57,26 @@ function buildSources(chunks: RetrievedChunk[]): SourceCitation[] {
 }
 
 /**
+ * Retrieve RAG context from ChromaDB. Returns empty on failure (graceful fallback).
+ */
+async function retrieveContext(query: string): Promise<{ retrieved: RetrievedChunk[]; context: string }> {
+  try {
+    const queryEmbedding = await getEmbedding(query);
+    const collection = await getOrCreateCollection();
+    const retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
+    const context = retrieved
+      .map(
+        (r, i) =>
+          `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
+      )
+      .join("\n\n---\n\n");
+    return { retrieved, context };
+  } catch {
+    return { retrieved: [], context: "" };
+  }
+}
+
+/**
  * Parse the raw LLM response into a structured ChatResponse.
  */
 function parseResponse(
@@ -88,62 +110,74 @@ function parseResponse(
 
 /**
  * Full RAG query: embed → retrieve → generate → parse.
+ * For policy mode: extract intent → match ontology → generate with resolved attributes.
  */
 export async function ragQuery(
   query: string,
   mode: ChatMode
 ): Promise<ChatResponse> {
-  // 1. Embed the user query and retrieve relevant chunks (graceful fallback if RAG unavailable)
-  let retrieved: RetrievedChunk[] = [];
-  let context = "";
-  try {
-    const queryEmbedding = await getEmbedding(query);
-    const collection = await getOrCreateCollection();
-    retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
-    context = retrieved
-      .map(
-        (r, i) =>
-          `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
-      )
-      .join("\n\n---\n\n");
-  } catch {
-    // RAG unavailable (embedding model missing or ChromaDB down) — continue with LLM-only
+  // 1. Retrieve RAG context
+  const { retrieved, context } = await retrieveContext(query);
+
+  // 2. For policy mode, run extraction pipeline first
+  let enrichedContext = context;
+  let extractionResult = undefined;
+
+  if (mode === "policy") {
+    try {
+      extractionResult = await extractPolicyIntent(query);
+      const extractionContext = formatExtractionContext(extractionResult);
+      enrichedContext = extractionContext + "\n\n---\n\n" + context;
+    } catch {
+      // Extraction failed — fall back to standard RAG without ontology
+    }
   }
 
-  // 2. Generate response with mode-specific system prompt
+  // 3. Generate response with mode-specific system prompt
   const systemPrompt = SYSTEM_PROMPTS[mode];
-  const rawResponse = await generateResponse(systemPrompt, query, context);
+  const rawResponse = await generateResponse(systemPrompt, query, enrichedContext);
 
-  // 3. Parse and structure the response
-  return parseResponse(rawResponse, retrieved, mode);
+  // 4. Parse and structure the response
+  const response = parseResponse(rawResponse, retrieved, mode);
+
+  // 5. For policy mode, attach extraction data and run validation
+  if (mode === "policy" && extractionResult) {
+    response.extraction = extractionResult;
+
+    if (response.policyXml) {
+      response.validation = validatePolicy(response.policyXml);
+    }
+  }
+
+  return response;
 }
 
 /**
  * Streaming RAG query: embed → retrieve → stream tokens via SSE.
- * Sends source citations as the first SSE event, then streams content tokens.
+ * For policy mode: runs extraction first, then streams generation with ontology context.
  */
 export async function ragQueryStream(
   query: string,
   mode: ChatMode
 ): Promise<ReadableStream<Uint8Array>> {
-  // 1. Embed the user query and retrieve relevant chunks (graceful fallback if RAG unavailable)
-  let retrieved: RetrievedChunk[] = [];
-  let context = "";
-  try {
-    const queryEmbedding = await getEmbedding(query);
-    const collection = await getOrCreateCollection();
-    retrieved = await queryDocuments(collection, queryEmbedding, TOP_K);
-    context = retrieved
-      .map(
-        (r, i) =>
-          `[Source ${i + 1}: ${r.metadata.title} > ${r.metadata.heading}]\n${r.content}`
-      )
-      .join("\n\n---\n\n");
-  } catch {
-    // RAG unavailable (embedding model missing or ChromaDB down) — continue with LLM-only
+  // 1. Retrieve RAG context
+  const { retrieved, context } = await retrieveContext(query);
+
+  // 2. For policy mode, run extraction pipeline
+  let enrichedContext = context;
+  let extractionResult = undefined;
+
+  if (mode === "policy") {
+    try {
+      extractionResult = await extractPolicyIntent(query);
+      const extractionContext = formatExtractionContext(extractionResult);
+      enrichedContext = extractionContext + "\n\n---\n\n" + context;
+    } catch {
+      // Extraction failed — fall back to standard RAG
+    }
   }
 
-  // 2. Build sources upfront
+  // 3. Build sources upfront
   const sources = buildSources(retrieved);
   const systemPrompt = SYSTEM_PROMPTS[mode];
 
@@ -157,8 +191,15 @@ export async function ragQueryStream(
           encoder.encode(`data: ${JSON.stringify({ type: "sources", sources })}\n\n`)
         );
 
+        // Send extraction results (policy mode only)
+        if (mode === "policy" && extractionResult) {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: "extraction", extraction: extractionResult })}\n\n`)
+          );
+        }
+
         // Stream content tokens
-        const stream = generateResponseStream(systemPrompt, query, context);
+        const stream = generateResponseStream(systemPrompt, query, enrichedContext);
         let fullContent = "";
 
         for await (const token of stream) {
@@ -168,10 +209,17 @@ export async function ragQueryStream(
           );
         }
 
-        // Send final parsed artifacts (policyXml, script) after streaming completes
+        // Send final parsed artifacts (policyXml, script, validation) after streaming completes
         const parsed = parseResponse(fullContent, retrieved, mode);
         const done: Record<string, unknown> = { type: "done" };
-        if (parsed.policyXml) done.policyXml = parsed.policyXml;
+        if (parsed.policyXml) {
+          done.policyXml = parsed.policyXml;
+
+          // Run validation on generated policy
+          if (mode === "policy") {
+            done.validation = validatePolicy(parsed.policyXml);
+          }
+        }
         if (parsed.script) done.script = parsed.script;
 
         controller.enqueue(

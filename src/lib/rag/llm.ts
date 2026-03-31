@@ -1,17 +1,21 @@
-import { Ollama } from "ollama";
+import OpenAI from "openai";
 
-const ollama = new Ollama({
-  host: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-const MODEL = process.env.LLM_MODEL || "llama3.1:8b";
+const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
 const TEMPERATURE = parseFloat(process.env.LLM_TEMPERATURE || "0.1");
 
-function buildMessages(systemPrompt: string, userMessage: string, context: string) {
+function buildMessages(
+  systemPrompt: string,
+  userMessage: string,
+  context: string
+): OpenAI.ChatCompletionMessageParam[] {
   return [
-    { role: "system" as const, content: systemPrompt },
+    { role: "system", content: systemPrompt },
     {
-      role: "user" as const,
+      role: "user",
       content: [
         "<context>",
         context,
@@ -30,13 +34,13 @@ export async function generateResponse(
   userMessage: string,
   context: string
 ): Promise<string> {
-  const response = await ollama.chat({
+  const response = await openai.chat.completions.create({
     model: MODEL,
     messages: buildMessages(systemPrompt, userMessage, context),
-    options: { temperature: TEMPERATURE },
+    temperature: TEMPERATURE,
   });
 
-  return response.message.content;
+  return response.choices[0]?.message?.content ?? "";
 }
 
 export async function* generateResponseStream(
@@ -44,14 +48,35 @@ export async function* generateResponseStream(
   userMessage: string,
   context: string
 ): AsyncGenerator<string> {
-  const response = await ollama.chat({
+  const stream = await openai.chat.completions.create({
     model: MODEL,
     messages: buildMessages(systemPrompt, userMessage, context),
-    options: { temperature: TEMPERATURE },
+    temperature: TEMPERATURE,
     stream: true,
   });
 
-  for await (const chunk of response) {
-    yield chunk.message.content;
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content;
+    if (content) yield content;
   }
+}
+
+/**
+ * Generate a structured JSON response using OpenAI's JSON mode.
+ * Used for intent extraction where deterministic structure is required.
+ */
+export async function generateJsonResponse(
+  systemPrompt: string,
+  userMessage: string,
+  context: string
+): Promise<Record<string, unknown>> {
+  const response = await openai.chat.completions.create({
+    model: MODEL,
+    messages: buildMessages(systemPrompt, userMessage, context),
+    temperature: TEMPERATURE,
+    response_format: { type: "json_object" },
+  });
+
+  const content = response.choices[0]?.message?.content ?? "{}";
+  return JSON.parse(content) as Record<string, unknown>;
 }

@@ -4,7 +4,7 @@
 <!-- SYNC: This file must stay in sync with CLAUDE.md. When editing either file, update both. -->
 
 ## Stack
-Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-mdx-remote), Ollama + ChromaDB RAG
+Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-mdx-remote), OpenAI API + ChromaDB RAG
 
 ## Aliases
 `@/*` → `./src/*`, `@content/*` → `./content/*`
@@ -47,7 +47,7 @@ Next.js 16 (App Router), React 19, TS 5.9, Tailwind 4, Framer Motion, MDX (next-
 - Input limits: 2000 chars (text), 50000 chars (XML)
 
 ## Env
-See `.env.example` — Ollama (URL, model, temp), ChromaDB (URL, collection, embedding model, top_k), API_KEY (optional)
+See `.env.example` — OpenAI (API key, model, embedding model, temp), ChromaDB (URL, collection, top_k), API_KEY (optional)
 
 ## Extended Guides
 - `.claude/guides/conventions.md` — Full coding patterns & standards

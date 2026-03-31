@@ -25,12 +25,14 @@ export async function POST(request: NextRequest) {
       content: result.content,
       policyXml: result.policyXml || null,
       sources: result.sources,
+      extraction: result.extraction || null,
+      validation: result.validation || null,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     logApiRequest("/api/generate-policy", { status: "error", error: msg });
     return NextResponse.json(
-      { error: "Failed to generate policy. Ensure Ollama and ChromaDB are running." },
+      { error: "Failed to generate policy. Ensure OpenAI API key is set and ChromaDB is running." },
       { status: 500 }
     );
   }

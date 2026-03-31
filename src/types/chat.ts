@@ -1,3 +1,6 @@
+import type { ExtractionResult } from "@/lib/rag/extractor";
+import type { ValidationResult } from "@/lib/ontology/types";
+
 export type ChatMode = "qa" | "policy" | "setup" | "scripts";
 
 export interface SourceCitation {
@@ -14,6 +17,8 @@ export interface Message {
   sources?: SourceCitation[];
   policyXml?: string;
   script?: string;
+  extraction?: ExtractionResult;
+  validation?: ValidationResult[];
   timestamp: Date;
 }
 
@@ -23,4 +28,6 @@ export interface ChatResponse {
   policyXml?: string;
   xmlWarning?: string;
   script?: string;
+  extraction?: ExtractionResult;
+  validation?: ValidationResult[];
 }

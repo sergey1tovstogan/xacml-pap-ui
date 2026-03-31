@@ -9,10 +9,17 @@ type EvaluateInput = z.infer<typeof evaluatePolicySchema>;
 
 type Decision = "Permit" | "Deny" | "NotApplicable" | "Indeterminate";
 
+interface Obligation {
+  obligationId: string;
+  fulfillOn: string;
+  attributes: Array<{ attributeId: string; value: string }>;
+}
+
 interface EvaluateResponse {
   decision: Decision;
   explanation: string;
   matchedRules: string[];
+  obligations: Obligation[];
 }
 
 interface ParsedRule {
@@ -64,8 +71,53 @@ function collectAttributeValues(node: unknown): string[] {
 }
 
 /**
+ * Extract ObligationExpressions from parsed policy XML.
+ */
+function extractObligations(policyNode: Record<string, unknown>): Obligation[] {
+  const obligations: Obligation[] = [];
+
+  // Find ObligationExpressions container
+  const oblExprs = policyNode.ObligationExpressions as Record<string, unknown> | undefined;
+  if (!oblExprs) return obligations;
+
+  const exprList = asArray(
+    (oblExprs.ObligationExpression ?? oblExprs) as Record<string, unknown> | Record<string, unknown>[]
+  );
+
+  for (const expr of exprList) {
+    if (typeof expr !== "object" || expr === null) continue;
+    const e = expr as Record<string, unknown>;
+
+    const obligationId = String(e["@_ObligationId"] || "unknown");
+    const fulfillOn = String(e["@_FulfillOn"] || "Permit");
+
+    const attributes: Array<{ attributeId: string; value: string }> = [];
+    const attrAssignments = asArray(e.AttributeAssignmentExpression as Record<string, unknown> | Record<string, unknown>[]);
+
+    for (const assignment of attrAssignments) {
+      if (typeof assignment !== "object" || assignment === null) continue;
+      const a = assignment as Record<string, unknown>;
+      const attrId = String(a["@_AttributeId"] || "");
+      const attrValue = a.AttributeValue;
+      let value = "";
+      if (typeof attrValue === "string") {
+        value = attrValue;
+      } else if (typeof attrValue === "object" && attrValue !== null && "#text" in (attrValue as Record<string, unknown>)) {
+        value = String((attrValue as Record<string, unknown>)["#text"]);
+      }
+      if (attrId) attributes.push({ attributeId: attrId, value });
+    }
+
+    obligations.push({ obligationId, fulfillOn, attributes });
+  }
+
+  return obligations;
+}
+
+/**
  * Simplified XACML policy evaluator using proper XML parsing.
  * Matches subject attributes and action against policy targets and rules.
+ * Now also extracts and returns ObligationExpressions.
  */
 function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): EvaluateResponse {
   const matchedRules: string[] = [];
@@ -80,10 +132,14 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
         decision: "Indeterminate",
         explanation: "No Policy element found in the provided XML.",
         matchedRules: [],
+        obligations: [],
       };
     }
 
-    const policy = parsed[policyKey];
+    const policy = parsed[policyKey] as Record<string, unknown>;
+
+    // Extract obligations from the policy
+    const allObligations = extractObligations(policy);
 
     // Extract all attribute values from the entire policy for target matching
     const allAttributeValues = collectAttributeValues(policy);
@@ -101,7 +157,7 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
     const isDenyOverrides = combiningAlg.includes("deny-overrides");
 
     // Extract rules
-    const rawRules = asArray(policy.Rule);
+    const rawRules = asArray(policy.Rule as Record<string, unknown> | Record<string, unknown>[]);
     const rules: ParsedRule[] = rawRules.map((r: Record<string, unknown>) => ({
       id: String(r["@_RuleId"] || "unknown"),
       effect: (r["@_Effect"] === "Permit" ? "Permit" : "Deny") as "Permit" | "Deny",
@@ -114,8 +170,13 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
         decision: "NotApplicable",
         explanation: `Policy target did not match. No subject attribute matched the request attributes [${subjectValues.join(", ")}].`,
         matchedRules: [],
+        obligations: [],
       };
     }
+
+    // Filter obligations based on decision
+    const getObligationsForDecision = (decision: Decision) =>
+      allObligations.filter((o) => o.fulfillOn === decision);
 
     for (const rule of rules) {
       const ruleMatches = !rule.hasTarget ||
@@ -130,6 +191,7 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
             decision: rule.effect,
             explanation: `Policy target matched. Rule "${rule.id}" (Effect: ${rule.effect}) was the first applicable rule.${actionMatch ? ` Action "${request.action}" matched.` : ""}`,
             matchedRules,
+            obligations: getObligationsForDecision(rule.effect),
           };
         }
       }
@@ -141,16 +203,19 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
         decision: "Deny",
         explanation: `Policy target matched. Deny-overrides algorithm applied. A Deny rule was found among matched rules: [${matchedRules.join(", ")}].`,
         matchedRules,
+        obligations: getObligationsForDecision("Deny"),
       };
     }
 
     // If rules matched, use the last one's effect (permit-overrides default)
     if (matchedRules.length > 0) {
       const lastRule = rules.find((r) => r.id === matchedRules[matchedRules.length - 1]);
+      const decision = lastRule?.effect || "Deny";
       return {
-        decision: lastRule?.effect || "Deny",
+        decision,
         explanation: `Policy target matched. ${matchedRules.length} rule(s) evaluated: [${matchedRules.join(", ")}].`,
         matchedRules,
+        obligations: getObligationsForDecision(decision),
       };
     }
 
@@ -158,12 +223,14 @@ function evaluatePolicy(policyXml: string, request: EvaluateInput["request"]): E
       decision: "NotApplicable",
       explanation: "Policy target matched but no rules were applicable for the given request.",
       matchedRules: [],
+      obligations: [],
     };
   } catch {
     return {
       decision: "Indeterminate",
       explanation: "An error occurred during policy evaluation. Check the policy XML syntax.",
       matchedRules: [],
+      obligations: [],
     };
   }
 }

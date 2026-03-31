@@ -2,11 +2,18 @@
 
 import { useRef, useCallback } from "react";
 import type { ChatMode, SourceCitation } from "@/types";
+import type { ExtractionResult } from "@/lib/rag/extractor";
+import type { ValidationResult } from "@/lib/ontology/types";
 
 interface StreamCallbacks {
   onSources: (sources: SourceCitation[]) => void;
   onToken: (token: string) => void;
-  onDone: (artifacts: { policyXml?: string; script?: string }) => void;
+  onExtraction: (extraction: ExtractionResult) => void;
+  onDone: (artifacts: {
+    policyXml?: string;
+    script?: string;
+    validation?: ValidationResult[];
+  }) => void;
   onError: (error: string) => void;
 }
 
@@ -55,6 +62,9 @@ export function useStreamingChat() {
               case "sources":
                 callbacks.onSources(event.sources);
                 break;
+              case "extraction":
+                callbacks.onExtraction(event.extraction);
+                break;
               case "token":
                 callbacks.onToken(event.token);
                 break;
@@ -62,6 +72,7 @@ export function useStreamingChat() {
                 callbacks.onDone({
                   policyXml: event.policyXml,
                   script: event.script,
+                  validation: event.validation,
                 });
                 break;
               case "error":

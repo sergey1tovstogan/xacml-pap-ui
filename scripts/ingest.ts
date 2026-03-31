@@ -27,7 +27,7 @@ async function main() {
   console.log();
 
   // 2. Generate embeddings
-  console.log("Generating embeddings with nomic-embed-text...");
+  console.log("Generating embeddings with OpenAI text-embedding-3-small...");
   const texts = chunks.map((c) => c.content);
   const embeddings = await getEmbeddings(texts);
   console.log(`  Generated ${embeddings.length} embeddings\n`);
@@ -45,10 +45,9 @@ async function main() {
 main().catch((error) => {
   console.error("\nIngestion failed:", error.message);
   console.error(
-    "\nMake sure Ollama and ChromaDB are running:\n" +
-      "  - Ollama: ollama serve\n" +
+    "\nMake sure ChromaDB is running and OPENAI_API_KEY is set:\n" +
       "  - ChromaDB: chroma run --port 8000\n" +
-      "  - Pull embedding model: ollama pull nomic-embed-text"
+      "  - Set OPENAI_API_KEY in .env.local"
   );
   process.exit(1);
 });

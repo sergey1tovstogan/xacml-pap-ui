@@ -62,6 +62,7 @@ export function FloatingAssistant() {
 
       await streamChat(userMessage, mode, {
         onSources: () => {},
+        onExtraction: () => {},
         onToken: (token) => {
           accumulated += token;
           updateStreamingMessage(accumulated);
